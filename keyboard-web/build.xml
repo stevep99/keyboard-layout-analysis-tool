@@ -1,0 +1,23 @@
+<project name="keyboard" default="deploy">
+
+	<property name="deploy.dir" value="${user.home}/Projects/spwebgames.com/${ant.project.name}" />
+
+	<target name="resources">
+		<copy todir="src/main/webapp/resources/">
+			<fileset dir="../keyboard/resources/"/>
+		</copy>
+	</target>
+
+	<target name="deploy">
+		<delete dir="${deploy.dir}/webapp/"></delete>
+		<copy todir="${deploy.dir}/webapp/">
+			<fileset dir="target/keyboardTeaVM-1.0-SNAPSHOT">
+				<include name="**/*.js" />
+				<include name="**/*.html" />
+				<include name="resources/**" />
+			</fileset>
+		</copy>
+		<echo message="${ant.project.name} deployed" />
+	</target>
+
+</project>

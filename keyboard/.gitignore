@@ -1,0 +1,6 @@
+build
+.gradle
+.idea
+output
+resources/config2
+local.properties

@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+group = 'io.github.colemakmods'
+version = '1.0-SNAPSHOT'
+
+dependencies {
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'resources'
+        }
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'KeyboardAnalysis'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+repositories {
+    mavenLocal()
+}
+
