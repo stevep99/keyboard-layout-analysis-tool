@@ -9,9 +9,9 @@ The model used is defined in more detail at http://colemakmods.github.io/mod-dh/
 
 If you want to use this code to analyze layouts but would rather avoid compiling the code, then use this online version of the app: http://colemakmods.github.io/mod-dh/analyze.html
 
-The project contains two modules: "Keyboard" and "KeyboardWeb"
+The project contains two modules: "keyboard" and "keyboard-web"
 
-## The "Keyboard" Module
+## The "keyboard" Module
 
 This module is the main Java app. You can use this to:
 
@@ -55,7 +55,7 @@ The ```resources``` folder contains all the input files which are used by the an
 
 - Keyboard configuration items, defining penalties and finger assignments in ```resources/config/*```. See [here](http://colemakmods.github.io/mod-dh/analyze.html) for detailed explanation.
 
-## The "KeyboardWeb" Module
+## The "keyboard-web" Module
 
 This module generates the web interface for the tool, as shown at http://colemakmods.github.io/mod-dh/analyze.html
 
@@ -67,9 +67,9 @@ The module is build using [maven](https://maven.apache.org/), and uses [TeaVM](h
 
 1. Ensure you have a recent JDK (recommended version 8+) installed.
 2. Ensure you have maven installed.
-3. ```cd KeyboardWeb```
+3. ```cd keyboard-web```
 4. copy the resource files ```prepare-resources.sh```
 4. ```mvn package```
-5. If compiling was successful, you should have the generated web files in ```KeyboardWeb/target```
+5. If compiling was successful, you should have the generated web files in ```keyboard-web/target```
 
 
