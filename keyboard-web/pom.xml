@@ -9,7 +9,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <teavm.version>0.4.3</teavm.version>
+    <teavm.version>0.6.0</teavm.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -98,9 +98,6 @@
 
               <!-- Main class, containing static void main(String[]) -->
               <mainClass>io.github.colemakmods.web.KeyboardClient</mainClass>
-
-              <!-- How to attach runtime.js. Possible values are: SEPARATE, MERGED and NONE -->
-              <runtime>SEPARATE</runtime>
 
               <!-- Whether TeaVM should produce minified JavaScript. Can reduce JavaScript file size more than
                    two times -->
