@@ -124,9 +124,9 @@ public class BigramFreq {
     public static class BigramFreqComparer implements Comparator<BigramFreq> {
         @Override
         public int compare(BigramFreq bf1, BigramFreq bf2) {
-            if (bf1.freq > bf2.freq) {
+            if (bf1.count > bf2.count) {
                 return -1;
-            } else if (bf1.freq < bf2.freq) {
+            } else if (bf1.count < bf2.count) {
                 return 1;
             } else {
                 return 0;

@@ -188,5 +188,6 @@ public class KeyboardLayout {
             }
             out.println();
         }
+        //out.println("Alphabet " + getAlphabet() + "\n");
     }
 }

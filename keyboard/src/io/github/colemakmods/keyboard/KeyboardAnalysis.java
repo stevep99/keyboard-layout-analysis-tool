@@ -83,7 +83,7 @@ public class KeyboardAnalysis {
                 outputOptions = DEFAULT_OUTPUT_OPTIONS;
             }
             //generate full text report
-            if (outputOptions.indexOf("t") >= 0) {
+            if (outputOptions.indexOf('t') >= 0) {
                 KeyboardAnalysisTextReport kr = new KeyboardAnalysisTextReport(10, 5);
                 String output = kr.generate(layoutResults);
                 System.out.println(output);
@@ -185,7 +185,7 @@ public class KeyboardAnalysis {
             Key key1 = keyboardLayout.lookupKey(chars[0]);
             Key key2 = keyboardLayout.lookupKey(chars[1]);
             if (key1 != null && key2 != null) {
-                if (key1 != key2 && FingerConfig.isSameFinger(key1.getFinger(), key2.getFinger())) {
+                if (chars[0] != chars[1] && FingerConfig.isSameFinger(key1.getFinger(), key2.getFinger())) {
                     FingerBigram fingerBigram = new FingerBigram(key1, key2, bigramFreq);
                     fingerBigrams.add(fingerBigram);
                 }

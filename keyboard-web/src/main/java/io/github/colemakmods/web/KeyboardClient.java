@@ -17,7 +17,7 @@ import org.teavm.jso.dom.html.*;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.18";
+    public static final String VERSION = "v1.19";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();

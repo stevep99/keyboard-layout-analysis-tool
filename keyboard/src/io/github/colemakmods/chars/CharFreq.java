@@ -55,7 +55,7 @@ public class CharFreq {
                 if (!line.startsWith("#") && tokens.size() >= 2) {
                     String ch = tokens.get(0).toUpperCase();
                     if (ch.length() == 1) {
-                        if (alphabet.indexOf(ch) >= 0) {
+                        if (alphabet.contains(ch)) {
                             long count = Long.parseLong(tokens.get(1));
                             cfreqList.add(new CharFreq(ch.charAt(0), count));
                         }
@@ -123,9 +123,9 @@ public class CharFreq {
     public static class CharFreqComparer implements Comparator<CharFreq> {
         @Override
         public int compare(CharFreq cf1, CharFreq cf2) {
-            if (cf1.freq > cf2.freq) {
+            if (cf1.count > cf2.count) {
                 return -1;
-            } else if (cf1.freq < cf2.freq) {
+            } else if (cf1.count < cf2.count) {
                 return 1;
             } else {
                 return 0;
