@@ -6,6 +6,7 @@ import io.github.colemakmods.chars.FreqAnalysis;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -35,8 +36,8 @@ public class KeyboardAnalysis {
         keyboardLayout.dump(System.out);
 
         String outputOptions = null;
-        CharFreq[] cFreqs = null;
-        BigramFreq[] bFreqs = null;
+        List<CharFreq> charFreqs = null;
+        List<BigramFreq> bigramFreqs = null;
 
         FingerConfig fingerConfig = new FingerConfig();
         for (int i=0; i<args.length-1; ++i) {
@@ -48,9 +49,9 @@ public class KeyboardAnalysis {
 
             } else if (args[i].equals("-f")) {
                 String frequencyFile = args[++i];
-                cFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
-                bFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
-                if (cFreqs == null || bFreqs == null) {
+                charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
+                bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
+                if (charFreqs == null || bigramFreqs == null) {
                     return;
                 }
 
@@ -60,8 +61,8 @@ public class KeyboardAnalysis {
                 FreqAnalysis fa = new FreqAnalysis(keyboardLayout.getAlphabet());
                 fa.analyze(new File(wordFile));
 
-                cFreqs = fa.getCharFreqs();
-                bFreqs = fa.getBigramFreqs();
+                charFreqs = fa.getCharFreqs();
+                bigramFreqs = fa.getBigramFreqs();
 
             } else if (args[i].startsWith("-o")) {
                 outputOptions = args[++i];
@@ -69,13 +70,13 @@ public class KeyboardAnalysis {
         }
         fingerConfig.dump(keyboardLayout, System.out);
 
-        if (cFreqs == null || bFreqs == null) {
+        if (charFreqs == null || bigramFreqs == null) {
             exitHelp();
             return;
         }
 
         KeyboardAnalysis ka = new KeyboardAnalysis();
-        LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, cFreqs, bFreqs);
+        LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
 
         try {
             //use default outputOptions if none supplied
@@ -105,23 +106,24 @@ public class KeyboardAnalysis {
         System.exit(0);
     }
 
-    public LayoutResults performAnalysis(KeyboardLayout keyboardLayout, CharFreq[] cFreqs, BigramFreq[] bFreqs) {
+    public LayoutResults performAnalysis(KeyboardLayout keyboardLayout, List<CharFreq> charFreqs, List<BigramFreq> bigramFreqs) {
         List<String> messages = sanityCheck(keyboardLayout);
 
-        double[] fingerFreq = calculateFingerFrequency(keyboardLayout, cFreqs);
+        HashMap<Key, Double> keyFreq = calculateKeyFrequency(keyboardLayout, charFreqs);
+        double[] fingerFreq = calculateFingerFrequency(keyboardLayout, charFreqs);
 
-        double handAlternation = countHandAlternation(keyboardLayout, bFreqs);
+        double handAlternation = countHandAlternation(keyboardLayout, bigramFreqs);
 
-        //find same-finger bigrams for the current layout
-        List<FingerBigram> sameFingerBigrams = findSameFingerBigrams(keyboardLayout, bFreqs);
-        List<FingerBigram> neighbourFingerBigrams = findNeighbourFingerBigrams(keyboardLayout, bFreqs);
+        //find difficult bigrams for the current layout
+        List<FingerBigram> sameFingerBigrams = findSameFingerBigrams(keyboardLayout, bigramFreqs);
+        List<FingerBigram> neighbourFingerBigrams = findNeighbourFingerBigrams(keyboardLayout, bigramFreqs);
 
         double[][] fingerEffort = new double[3][];
-        fingerEffort[0] = calculateBaseEffort(keyboardLayout, cFreqs);
+        fingerEffort[0] = calculateBaseEffort(keyboardLayout, charFreqs);
         fingerEffort[1] = calculateSameFingerBigramEffort(keyboardLayout, sameFingerBigrams);
         fingerEffort[2] = calculateNeighbourFingerBigramEffort(keyboardLayout, neighbourFingerBigrams);
 
-        return new LayoutResults(keyboardLayout, messages, fingerFreq, handAlternation,
+        return new LayoutResults(keyboardLayout, messages, keyFreq, fingerFreq, handAlternation,
             sameFingerBigrams, neighbourFingerBigrams, fingerEffort);
     }
 
@@ -129,6 +131,10 @@ public class KeyboardAnalysis {
         List<String> messages = new ArrayList<>();
 
         String alphabet = keyboardLayout.getAlphabet();
+        if (keyboardLayout.getRows() > 4) {
+            messages.add("Warning: Too many rows");
+        }
+
         for (char c = 'A'; c <= 'Z'; ++c) {
             if (alphabet.indexOf(c) < 0) {
                 messages.add("Warning: letter " + c + " is missing from layout. ");
@@ -143,7 +149,25 @@ public class KeyboardAnalysis {
         return messages;
     }
 
-    private double[] calculateFingerFrequency(KeyboardLayout keyboardLayout, CharFreq[] charFreqs) {
+    private HashMap<Key, Double> calculateKeyFrequency(KeyboardLayout keyboardLayout, List<CharFreq> charFreqs) {
+        HashMap<Key, Double> keyFrequency = new HashMap<>();
+        for (int row = 0; row < keyboardLayout.getRows(); ++row) {
+            for (int col = 0; col < keyboardLayout.getCols(); ++col) {
+                Key key = keyboardLayout.lookupKey(row, col);
+                if (key != null) {
+                    Double freqTotal = 0.;
+                    for (char ch : key.getChars()) {
+                        CharFreq cf = CharFreq.findByChar(ch, charFreqs);
+                        if (cf != null) freqTotal += cf.getFreq();
+                    }
+                    keyFrequency.put(key, freqTotal);
+                }
+            }
+        }
+        return keyFrequency;
+    }
+
+    private double[] calculateFingerFrequency(KeyboardLayout keyboardLayout, List<CharFreq> charFreqs) {
         double[] fingerFreq = new double[10];
 
         for (CharFreq charFreq : charFreqs) {
@@ -157,7 +181,7 @@ public class KeyboardAnalysis {
         return fingerFreq;
     }
 
-    private double countHandAlternation(KeyboardLayout keyboardLayout, BigramFreq[] bigramFreqs) {
+    private double countHandAlternation(KeyboardLayout keyboardLayout, List<BigramFreq> bigramFreqs) {
         double handAlternation = 0f;
         for (BigramFreq bigramFreq : bigramFreqs) {
             char[] chars = bigramFreq.getString().toCharArray();
@@ -177,7 +201,7 @@ public class KeyboardAnalysis {
      * @param bigramFreqs the full set of bigram frequencies
      * @return the list of same-finger bigrams found
      */
-    private List<FingerBigram> findSameFingerBigrams(KeyboardLayout keyboardLayout, BigramFreq[] bigramFreqs) {
+    private List<FingerBigram> findSameFingerBigrams(KeyboardLayout keyboardLayout, List<BigramFreq> bigramFreqs) {
         List<FingerBigram> fingerBigrams = new ArrayList<FingerBigram>();
 
         for (BigramFreq bigramFreq : bigramFreqs) {
@@ -203,7 +227,7 @@ public class KeyboardAnalysis {
      * @param bigramFreqs the full set of bigram frequencies
      * @return the list of neighbour-finger bigrams found
      */
-    private List<FingerBigram> findNeighbourFingerBigrams(KeyboardLayout keyboardLayout, BigramFreq[] bigramFreqs) {
+    private List<FingerBigram> findNeighbourFingerBigrams(KeyboardLayout keyboardLayout, List<BigramFreq> bigramFreqs) {
         List<FingerBigram> fingerBigrams = new ArrayList<FingerBigram>();
 
         for (BigramFreq bigramFreq : bigramFreqs) {
@@ -228,11 +252,11 @@ public class KeyboardAnalysis {
     /**
      * Calculate the base effort incurred due to key position
      */
-    private double[] calculateBaseEffort(KeyboardLayout keyboardLayout, CharFreq[] cfreq) {
+    private double[] calculateBaseEffort(KeyboardLayout keyboardLayout, List<CharFreq> charFreqs) {
         double[] baseEffort = new double[10];
         for (char ch : keyboardLayout.getAlphabet().toCharArray()) {
             Key key = keyboardLayout.lookupKey(ch);
-            CharFreq cf = CharFreq.findByChar(ch, cfreq);
+            CharFreq cf = CharFreq.findByChar(ch, charFreqs);
             if (cf != null) {
                 baseEffort[key.getFinger()] += key.getEffort() * cf.getFreq();
             }

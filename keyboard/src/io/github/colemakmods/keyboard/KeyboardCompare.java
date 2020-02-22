@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -39,12 +40,12 @@ public class KeyboardCompare {
         }
         keyboardLayout2.dump(System.out);
 
-        CharFreq[] cFreqs = null;
+        List<CharFreq> charFreqs = null;
         Properties posOverrides = null;
         for (int i = 0; i < args.length - 1; ++i) {
             if (args[i].equals("-f")) {
                 String frequencyFile = args[i + 1];
-                cFreqs = CharFreq.initialize(keyboardLayout1.getAlphabet(), new File(frequencyFile));
+                charFreqs = CharFreq.initialize(keyboardLayout1.getAlphabet(), new File(frequencyFile));
             } else if (args[i].equals("-p")) {
                 String posFile = args[i + 1];
                 posOverrides = new Properties();
@@ -58,12 +59,12 @@ public class KeyboardCompare {
             }
         }
 
-        if (cFreqs == null) {
+        if (charFreqs == null) {
             return;
         }
 
         KeyboardCompare kc = new KeyboardCompare();
-        kc.performCompare(keyboardLayout1, keyboardLayout2, cFreqs, posOverrides, System.out);
+        kc.performCompare(keyboardLayout1, keyboardLayout2, charFreqs, posOverrides, System.out);
     }
 
     private static void exitHelp() {
@@ -71,7 +72,7 @@ public class KeyboardCompare {
         System.exit(0);
     }
 
-    public void performCompare(KeyboardLayout keyboardLayout1, KeyboardLayout keyboardLayout2, CharFreq[] cFreqs, Properties posOverrides, PrintStream out) {
+    public void performCompare(KeyboardLayout keyboardLayout1, KeyboardLayout keyboardLayout2, List<CharFreq> charFreqs, Properties posOverrides, PrintStream out) {
         ExperienceCurve experienceCurve = new ExperienceCurve(EXP_B_PARAM);
 
         double totalPosDiff = 0f;
@@ -112,7 +113,7 @@ public class KeyboardCompare {
             }
             totalPosDiff += posdiff;
 
-            CharFreq cf = CharFreq.findByChar(ch, cFreqs);
+            CharFreq cf = CharFreq.findByChar(ch, charFreqs);
             if (cf != null) {
                 double freqCost = experienceCurve.getIntegratedCost(100*cf.getFreq());
                 double score = posdiff * freqCost;

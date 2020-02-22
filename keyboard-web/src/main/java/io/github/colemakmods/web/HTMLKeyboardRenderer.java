@@ -1,16 +1,20 @@
 package io.github.colemakmods.web;
 
+import io.github.colemakmods.chars.CharFreq;
 import io.github.colemakmods.keyboard.Key;
 import io.github.colemakmods.keyboard.KeyboardLayout;
+import io.github.colemakmods.web.teavm.JSFormatter;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.xml.Document;
 
+import java.util.HashMap;
 /**
  * Created by steve on 27/04/15.
  */
 public class HTMLKeyboardRenderer {
 
     private KeyboardLayout keyboardLayout;
+    private HashMap<Key, Double> keyFreq;
 
     private final static int STD_KEY_WIDTH = 24; //standard key width in pixels
 
@@ -27,15 +31,17 @@ public class HTMLKeyboardRenderer {
             "#80c4c4",
     };
 
-    public HTMLKeyboardRenderer(KeyboardLayout keyboardLayout) {
+    public HTMLKeyboardRenderer(KeyboardLayout keyboardLayout, HashMap<Key, Double> keyFreq) {
         this.keyboardLayout = keyboardLayout;
+        this.keyFreq = keyFreq;
     }
 
     public HTMLElement generate(Document document) {
         HTMLElement divElt = (HTMLElement) document.createElement("div");
         for (int row = 0; row < keyboardLayout.getRows(); ++row) {
             for (int col = 0; col < keyboardLayout.getCols(); ++col) {
-                int gap = determineGap(row, col);
+                int rowid = 5 - keyboardLayout.getRows() + row;
+                int gap = determineGap(rowid, col);
                 if (gap > 0) {
                     HTMLElement keyGapSpanElt = generateKeyGapElt(document, gap);
                     divElt.appendChild(keyGapSpanElt);
@@ -64,6 +70,13 @@ public class HTMLKeyboardRenderer {
         } else {
             spanElt.setHidden(true);
         }
+        if (keyFreq != null) {
+            Double keyFreqValue = keyFreq.get(key);
+            if (keyFreqValue != null) {
+                spanElt.setAttribute("title", "Key " + new String(key.getChars()) + " "
+                        + JSFormatter.toFixed(keyFreqValue * 100, 2) + "%");
+            }
+        }
         spanElt.appendChild(document.createTextNode(String.valueOf(key.getName())));
         return spanElt;
     }
@@ -75,24 +88,28 @@ public class HTMLKeyboardRenderer {
         return spanElt;
     }
 
-    private int determineGap(int row, int col) {
+    private int determineGap(int rowid, int col) {
         KeyboardLayout.KeyboardType type = keyboardLayout.getKeyboardType();
         if (type == KeyboardLayout.KeyboardType.STD) {
-            if (row == 0 && col == 0) {
+            if (rowid == 1 && col == 0) {
+                return 0;
+            } else if (rowid == 2 && col == 0) {
                 return STD_KEY_WIDTH / 2;
-            } else if (row == 1 && col == 0) {
+            } else if (rowid == 3 && col == 0) {
                 return STD_KEY_WIDTH * 3/4;
-            } else if (row == 2 && col == 0) {
+            } else if (rowid == 4 && col == 0) {
                 return STD_KEY_WIDTH * 5/4;
             }
         } else if (type == KeyboardLayout.KeyboardType.ANGLE) {
-            if (row == 0 && col == 0) {
+            if (rowid == 1 && col == 0) {
+                return 0;
+            } else if (rowid == 2 && col == 0) {
                 return STD_KEY_WIDTH / 2;
-            } else if (row == 1 && col == 0) {
+            } else if (rowid == 3 && col == 0) {
                 return STD_KEY_WIDTH * 3/4;
-            } else if (row == 2 && col == 0) {
+            } else if (rowid == 4 && col == 0) {
                 return STD_KEY_WIDTH * 1/4;
-            } else if (row == 2 && col == 5) {
+            } else if (rowid == 4 && col == 5) {
                 return STD_KEY_WIDTH;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX) {

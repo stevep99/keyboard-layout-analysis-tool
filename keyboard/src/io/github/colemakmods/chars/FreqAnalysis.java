@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.IOException;
 import java.lang.Character;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Perform a frequency analysis on some input text (corpus), and generate as output the
@@ -18,12 +20,12 @@ public class FreqAnalysis {
 	private final static String DEFAULT_ALPHABET = 
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
-    private CharFreq[] cfreq;
-    private BigramFreq[] bfreq;
+    private List<CharFreq> charFreqList;
+    private List<BigramFreq> bigramFreqList;
 
     public FreqAnalysis(String alphabet) {
-        cfreq = CharFreq.initialize(alphabet);
-        bfreq = BigramFreq.initialize(alphabet);
+        charFreqList = CharFreq.initialize(alphabet);
+        bigramFreqList = BigramFreq.initialize(alphabet);
     }
 
     public int analyze(File file) {
@@ -63,62 +65,80 @@ public class FreqAnalysis {
         char cp;
         int i = 0;
 
+        //set up caches for faster reading
+        HashMap<Character, CharFreq> cCache = new HashMap<>();
+        for (CharFreq cf : charFreqList) {
+            cCache.put(cf.getChar(), cf);
+        }
+        HashMap<String, BigramFreq> bCache = new HashMap<>();
+        for (BigramFreq bf : bigramFreqList) {
+            bCache.put(bf.getString(), bf);
+        }
+
         do {
             k = in.read();
-            if (k >= 0) {
-                cp = c;
-                c = Character.toUpperCase((char) k);
-                CharFreq cf = CharFreq.findByChar(c, cfreq);
+            if (k < 0) break;
+
+            cp = c;
+            c = Character.toUpperCase((char) k);
+            if (k > 32) { //skip any control/non-printable characters
+                CharFreq cf = cCache.get(c);
                 if (cf != null) {
                     cf.addCount();
+                } else if (k != 65533) {
+                    //for characters only - add to list if new character found
+                    cf = new CharFreq((char)k, 1);
+                    charFreqList.add(cf);
+                    cCache.put(cf.getChar(), cf);
                 }
                 String bigram = new StringBuilder().append(cp).append(c).toString().toUpperCase();
-                BigramFreq df = BigramFreq.findByString(bigram, bfreq);
-                if (df != null) {
-                    df.addCount();
+                BigramFreq bf = bCache.get(bigram);
+                if (bf != null) {
+                    bf.addCount();
                 }
+            }
 
-                ++i;
-                if (i % 10000 == 0) sort();
+            ++i;
+            if (i % 10240 == 0) {
+                System.err.print("Read " + (i/1024) + " kb\r");
             }
         } while (k >= 0);
 
-        sort();
-
-        CharFreq.normalize(cfreq);
-        BigramFreq.normalize(bfreq);
+        sortAndNormalize();
 
         return i;
     }
 
-    private void sort() {
-        Arrays.sort(cfreq, new CharFreq.CharFreqComparer());
-        Arrays.sort(bfreq, new BigramFreq.BigramFreqComparer());
+    private void sortAndNormalize() {
+        //
+        Collections.sort(charFreqList, new CharFreq.CharFreqComparer());
+        Collections.sort(bigramFreqList, new BigramFreq.BigramFreqComparer());
+
+        CharFreq.normalize(charFreqList);
+        BigramFreq.normalize(bigramFreqList);
     }
 
-    public CharFreq[] getCharFreqs() {
-        return cfreq;
+    public List<CharFreq> getCharFreqs() {
+        return charFreqList;
     }
 
-    public BigramFreq[] getBigramFreqs() {
-        return bfreq;
+    public List<BigramFreq> getBigramFreqs() {
+        return bigramFreqList;
     }
 
     public void showFrequencyAnalysis(boolean showNormalized) {
-        for (int i = 0; i < cfreq.length; ++i) {
-            CharFreq cf = cfreq[i];
+        for (CharFreq cf : charFreqList) {
             if (showNormalized) {
                 System.out.println(cf.getChar() + " " + cf.getCount() + " " + cf.getFreq());
             } else {
                 System.out.println(cf.getChar() + " " + cf.getCount());
             }
         }
-        for (int i = 0; i < bfreq.length; ++i) {
-            BigramFreq df = bfreq[i];
+        for (BigramFreq bf : bigramFreqList) {
             if (showNormalized) {
-                System.out.println(df.getString() + " " + df.getCount() + " " + df.getFreq());
+                System.out.println(bf.getString() + " " + bf.getCount() + " " + bf.getFreq());
             } else {
-                System.out.println(df.getString() + " " + df.getCount());
+                System.out.println(bf.getString() + " " + bf.getCount());
             }
         }
     }
@@ -149,7 +169,7 @@ public class FreqAnalysis {
 
         if (i > 0) {
             fa.showFrequencyAnalysis(showNormalized);
-            System.err.println("Read " + i + " characters in " + (timeEnd - timeStart) + "ms");
+            System.err.println("Read " + (i/1024) + " kb in " + (timeEnd - timeStart) + "ms");
         }
 
     }

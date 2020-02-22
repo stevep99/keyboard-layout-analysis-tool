@@ -15,17 +15,17 @@ import java.util.List;
  */
 
 public class CharFreq {
-    
-    public static CharFreq[] initialize(String alphabet) {
-        CharFreq[] charfreq = new CharFreq[alphabet.length()];
+
+    public static List<CharFreq> initialize(String alphabet) {
+        List<CharFreq> charFreqList = new ArrayList<>();
         for (int i=0; i< alphabet.length(); ++i) {
             char c = alphabet.charAt(i);
-            charfreq[i] = new CharFreq(c);
+            charFreqList.add(new CharFreq(c));
         }
-        return charfreq;
+        return charFreqList;
     }
 
-    public static CharFreq[] initialize(String alphabet, File file) {
+    public static List<CharFreq> initialize(String alphabet, File file) {
         try {
             return initialize(alphabet, new FileReader(file));
         } catch (IOException ex) {
@@ -35,7 +35,7 @@ public class CharFreq {
         }
     }
 
-    public static CharFreq[] initialize(String alphabet, String data) {
+    public static List<CharFreq> initialize(String alphabet, String data) {
         try {
             return initialize(alphabet, new StringReader(data));
         } catch (IOException ex) {
@@ -45,9 +45,9 @@ public class CharFreq {
         }
     }
 
-    private static CharFreq[] initialize(String alphabet, Reader in) throws IOException {
+    private static List<CharFreq> initialize(String alphabet, Reader in) throws IOException {
         String line;
-        List<CharFreq> cfreqList = new ArrayList<CharFreq>();
+        List<CharFreq> charFreqList = new ArrayList<CharFreq>();
         BufferedReader br = new BufferedReader(in);
         try {
             while ((line = br.readLine()) != null) {
@@ -57,7 +57,7 @@ public class CharFreq {
                     if (ch.length() == 1) {
                         if (alphabet.contains(ch)) {
                             long count = Long.parseLong(tokens.get(1));
-                            cfreqList.add(new CharFreq(ch.charAt(0), count));
+                            charFreqList.add(new CharFreq(ch.charAt(0), count));
                         }
                     }
                 }
@@ -65,26 +65,25 @@ public class CharFreq {
         } finally {
             br.close();
         }
-        CharFreq[] cfreq = cfreqList.toArray(new CharFreq[cfreqList.size()]);
-        normalize(cfreq);
+        normalize(charFreqList);
         //System.out.printf("Read %d char freq\n", cfreq.length);
-        return cfreq;
+        return charFreqList;
     }
 
-    public static void normalize(CharFreq[] charfreq) {
+    public static void normalize(List<CharFreq> charFreqList) {
         long total = 0;
-        for (int i=0; i< charfreq.length; ++i) {
-            total += charfreq[i].getCount();
+        for (CharFreq cf : charFreqList) {
+            total += cf.getCount();
         }
-        for (int i=0; i< charfreq.length; ++i) {
-            charfreq[i].freq = (double) charfreq[i].getCount() / total;
+        for (CharFreq cf : charFreqList) {
+            cf.freq = (double) cf.getCount() / total;
         }
     }
 
-    public static CharFreq findByChar(char c, CharFreq[] charfreq) {
-        for (int i=0; i< charfreq.length; ++i) {
-            if (Character.toUpperCase(c) == charfreq[i].getChar()) {
-                return charfreq[i];
+    public static CharFreq findByChar(char c, List<CharFreq> charFreqList) {
+        for (CharFreq cf : charFreqList) {
+            if (Character.toUpperCase(c) == cf.getChar()) {
+                return cf;
             }
         }
         return null;

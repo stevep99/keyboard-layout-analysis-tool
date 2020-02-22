@@ -3,4 +3,5 @@ build
 .idea
 output
 resources/config2
+resources/layout2
 local.properties

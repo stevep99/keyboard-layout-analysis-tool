@@ -15,19 +15,18 @@ import java.util.List;
  */
 public class BigramFreq {
 
-    public static BigramFreq[] initialize(String alphabet) {
-        BigramFreq[] bfreq = new BigramFreq[alphabet.length() * alphabet.length()];
-        int c = 0;
+    public static List<BigramFreq> initialize(String alphabet) {
+        List<BigramFreq> bigramFreqList = new ArrayList<>();
         for (int i=0; i< alphabet.length(); ++i) {
             for (int j=0; j< alphabet.length(); ++j) {
                 String str = new StringBuilder().append(alphabet.charAt(i)).append(alphabet.charAt(j)).toString();
-                bfreq[c++] = new BigramFreq(str);
+                bigramFreqList.add(new BigramFreq(str));
             }
         }
-        return bfreq;
+        return bigramFreqList;
     }
 
-    public static BigramFreq[] initialize(String alphabet, File file) {
+    public static List<BigramFreq> initialize(String alphabet, File file) {
         try {
             return initialize(alphabet, new FileReader(file));
         } catch (IOException ex) {
@@ -37,7 +36,7 @@ public class BigramFreq {
         }
     }
 
-    public static BigramFreq[] initialize(String alphabet, String data) {
+    public static List<BigramFreq> initialize(String alphabet, String data) {
         try {
             return initialize(alphabet, new StringReader(data));
         } catch (IOException ex) {
@@ -47,9 +46,9 @@ public class BigramFreq {
         }
     }
 
-    private static BigramFreq[] initialize(String alphabet, Reader in) throws IOException {
+    private static List<BigramFreq> initialize(String alphabet, Reader in) throws IOException {
         String line;
-        List<BigramFreq> bfreqList = new ArrayList<BigramFreq>();
+        List<BigramFreq> bigramFreqList = new ArrayList<>();
         BufferedReader br = new BufferedReader(in);
         try {
             while ((line = br.readLine()) != null) {
@@ -59,7 +58,7 @@ public class BigramFreq {
                     if (bigram.length() == 2) {
                         if (alphabet.indexOf(bigram.charAt(0)) >= 0 && alphabet.indexOf(bigram.charAt(1)) >= 0) {
                             long count = Long.parseLong(tokens.get(1));
-                            bfreqList.add(new BigramFreq(bigram, count));
+                            bigramFreqList.add(new BigramFreq(bigram, count));
                         }
                     }
                 }
@@ -67,26 +66,25 @@ public class BigramFreq {
         } finally {
             br.close();
         }
-        BigramFreq[] bfreq = bfreqList.toArray(new BigramFreq[bfreqList.size()]);
-        normalize(bfreq);
+        normalize(bigramFreqList);
         //System.out.printf("Read %d bigram freq\n", bfreq.length);
-        return bfreq;
+        return bigramFreqList;
     }
 
-    public static void normalize(BigramFreq[] bfreq) {
+    public static void normalize(List<BigramFreq> bigramFreqs) {
         long total = 0;
-        for (int i=0; i< bfreq.length; ++i) {
-            total += bfreq[i].getCount();
+        for (BigramFreq bf : bigramFreqs) {
+            total += bf.getCount();
         }
-        for (int i=0; i< bfreq.length; ++i) {
-            bfreq[i].freq = (double) bfreq[i].getCount() / total;
+        for (BigramFreq bf : bigramFreqs) {
+            bf.freq = (double) bf.getCount() / total;
         }
     }
 
-    public static BigramFreq findByString(String str, BigramFreq[] bfreq) {
-        for (int i=0; i< bfreq.length; ++i) {
-            if (bfreq[i].str.equals(str)) {
-                return bfreq[i];
+    public static BigramFreq findByString(String str, List<BigramFreq> bigramFreqs) {
+        for (BigramFreq bf : bigramFreqs) {
+            if (bf.str.equals(str)) {
+                return bf;
             }
         }
         return null;

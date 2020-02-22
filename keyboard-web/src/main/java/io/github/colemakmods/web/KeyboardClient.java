@@ -14,10 +14,11 @@ import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.html.*;
 
+import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.19";
+    public static final String VERSION = "v1.20";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();
@@ -133,17 +134,17 @@ public class KeyboardClient {
             return;
         }
 
-        CharFreq[] charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
-        BigramFreq[] bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
+        List<CharFreq> charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
+        List<BigramFreq> bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
 
         //layout.dump(System.out);
 
-        HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout);
-        HTMLElement keyboardElt = keyboardRenderer.generate(document);
-        setKeyboadPanel(keyboardElt);
-
         KeyboardAnalysis ka = new KeyboardAnalysis();
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
+
+        HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout, layoutResults.getKeyFreq());
+        HTMLElement keyboardElt = keyboardRenderer.generate(document);
+        setKeyboadPanel(keyboardElt);
 
         try {
             KeyboardAnalysisReport report = new KeyboardAnalysisWebHTMLReport(5);

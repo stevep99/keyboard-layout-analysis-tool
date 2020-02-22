@@ -1,5 +1,6 @@
 package io.github.colemakmods.keyboard;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,6 +11,7 @@ import java.util.List;
 public class LayoutResults {
     private KeyboardLayout keyboardLayout;
     private List<String> messages;
+    private HashMap<Key, Double> keyFreq;
     private double[] fingerFreq;
     private double handAlternation;
     private List<FingerBigram> sameFingerBigrams;
@@ -17,11 +19,12 @@ public class LayoutResults {
     private double[][] fingerEffort;
 
     public LayoutResults(KeyboardLayout keyboardLayout, List<String> messages,
-                         double[] fingerFreq, double handAlternation,
+                         HashMap<Key, Double> keyFreq, double[] fingerFreq, double handAlternation,
                          List<FingerBigram> sameFingerBigrams, List<FingerBigram> neighbourFingerBigrams,
                          double[][] fingerEffort) {
         this.keyboardLayout = keyboardLayout;
         this.messages = messages;
+        this.keyFreq = keyFreq;
         this.fingerFreq = fingerFreq;
         this.handAlternation = handAlternation;
         this.sameFingerBigrams = sameFingerBigrams;
@@ -35,6 +38,10 @@ public class LayoutResults {
 
     public List<String> getMessages() {
         return messages;
+    }
+
+    public HashMap<Key, Double> getKeyFreq() {
+        return keyFreq;
     }
 
     public double[] getFingerFreq() {
