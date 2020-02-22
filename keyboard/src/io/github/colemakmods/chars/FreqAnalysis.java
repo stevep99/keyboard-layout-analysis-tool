@@ -28,8 +28,8 @@ public class FreqAnalysis {
         bigramFreqList = BigramFreq.initialize(alphabet);
     }
 
-    public int analyze(File file) {
-        int i = -1;
+    public long analyze(File file) {
+        long i = -1L;
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
             try {
@@ -44,8 +44,8 @@ public class FreqAnalysis {
         return i;
     }
 
-    public int analyze(String ins) {
-        int i = -1;
+    public long analyze(String ins) {
+        long i = -1L;
         try {
             StringReader in  = new StringReader(ins);
             try {
@@ -59,11 +59,11 @@ public class FreqAnalysis {
         return i;
     }
     
-    private int analyze(Reader in) throws IOException {
+    private long analyze(Reader in) throws IOException {
         int k;
         char c = ' ';
         char cp;
-        int i = 0;
+        long i = 0L;
 
         //set up caches for faster reading
         HashMap<Character, CharFreq> cCache = new HashMap<>();
@@ -104,16 +104,18 @@ public class FreqAnalysis {
             }
         } while (k >= 0);
 
-        sortAndNormalize();
+        System.err.print("Read " + (i/1024) + " kb (complete)\r");
+        sort();
 
         return i;
     }
 
-    private void sortAndNormalize() {
-        //
+    private void sort() {
         Collections.sort(charFreqList, new CharFreq.CharFreqComparer());
         Collections.sort(bigramFreqList, new BigramFreq.BigramFreqComparer());
+    }
 
+    private void normalize() {
         CharFreq.normalize(charFreqList);
         BigramFreq.normalize(bigramFreqList);
     }
@@ -164,7 +166,10 @@ public class FreqAnalysis {
 
         long timeStart = System.currentTimeMillis();
         FreqAnalysis fa = new FreqAnalysis(alphabet);
-        int i = fa.analyze(new File(wordFile));
+        long i = fa.analyze(new File(wordFile));
+        if (showNormalized) {
+            fa.normalize();
+        }
         long timeEnd = System.currentTimeMillis();
 
         if (i > 0) {
