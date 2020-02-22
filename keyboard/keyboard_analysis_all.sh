@@ -1,14 +1,16 @@
 #!/bin/sh
 
-CONFIG_ERGO="config/effort_ergonomic_config.dat"
-CONFIG_TRAD="config/effort_traditional_config.dat"
-CONFIG_MATRIX="config/effort_matrix_config.dat"
+DIR=`pwd`
 
-FREQ="freq/en_books.freq"
+CONFIG_ERGO="$DIR/resources/config/effort_ergonomic_config.dat"
+CONFIG_TRAD="$DIR/resources/config/effort_traditional_config.dat"
+CONFIG_MATRIX="$DIR/resources/config/effort_matrix_config.dat"
+
+FREQ="$DIR/resources/freq/en_books.freq"
 
 OUTPUT_OPTS="tb"
 
-cd resources
+cd resources/layout
 
 for i in $( ls *.keyb ); do
   echo Analysing keyboard $i
@@ -20,5 +22,5 @@ for i in $( ls *.keyb ); do
     CONFIG=$CONFIG_TRAD
   fi
 
-  java -cp "../build/libs/keyboard-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c $CONFIG -f $FREQ -o $OUTPUT_OPTS $i > ../output/analysis_$i.out
+  java -cp "$DIR/build/libs/keyboard-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c $CONFIG -f $FREQ -o $OUTPUT_OPTS $i > $DIR/output/analysis_$i.out
 done

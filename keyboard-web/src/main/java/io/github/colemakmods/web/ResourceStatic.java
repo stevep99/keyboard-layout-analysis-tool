@@ -7,17 +7,17 @@ package io.github.colemakmods.web;
 public class ResourceStatic {
 
     public final static Resource[] ALL_KEYBOARDS = {
-        new Resource("Mod-DH", "", "colemak_dh.keyb"),
-        new Resource("Colemak", "", "colemak.keyb"),
-        new Resource("Dvorak", "", "dvorak.keyb"),
-        new Resource("Workman", "", "workman.keyb"),
-        new Resource("MTGAP", "", "mtgap.keyb"),
-        new Resource("BEAKL", "", "beakl.keyb"),
-        new Resource("Asset", "", "asset.keyb"),
-        new Resource("Norman", "", "norman.keyb"),
-        new Resource("Qwpr", "", "qwpr.keyb"),
-        new Resource("Minimak-8", "", "minimak8.keyb"),
-        new Resource("Qwerty", "", "qwerty.keyb"),
+        new Resource("Mod-DH", "", "layout/colemak_dh.keyb"),
+        new Resource("Colemak", "", "layout/colemak.keyb"),
+        new Resource("Dvorak", "", "layout/dvorak.keyb"),
+        new Resource("Workman", "", "layout/workman.keyb"),
+        new Resource("MTGAP", "", "layout/mtgap.keyb"),
+        new Resource("BEAKL", "", "layout/beakl.keyb"),
+        new Resource("Asset", "", "layout/asset.keyb"),
+        new Resource("Norman", "", "layout/norman.keyb"),
+        new Resource("Qwpr", "", "layout/qwpr.keyb"),
+        new Resource("Minimak-8", "", "layout/minimak8.keyb"),
+        new Resource("Qwerty", "", "layout/qwerty.keyb"),
     };
 
     public final static Resource[] ALL_CONFIGS = {
