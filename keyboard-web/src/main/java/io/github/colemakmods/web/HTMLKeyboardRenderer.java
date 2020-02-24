@@ -1,6 +1,5 @@
 package io.github.colemakmods.web;
 
-import io.github.colemakmods.chars.CharFreq;
 import io.github.colemakmods.keyboard.Key;
 import io.github.colemakmods.keyboard.KeyboardLayout;
 import io.github.colemakmods.web.teavm.JSFormatter;
@@ -36,7 +35,7 @@ public class HTMLKeyboardRenderer {
         this.keyFreq = keyFreq;
     }
 
-    public HTMLElement generate(Document document) {
+    public HTMLElement generate(Document document, boolean isHeatmap) {
         HTMLElement divElt = (HTMLElement) document.createElement("div");
         for (int row = 0; row < keyboardLayout.getRows(); ++row) {
             for (int col = 0; col < keyboardLayout.getCols(); ++col) {
@@ -48,7 +47,7 @@ public class HTMLKeyboardRenderer {
                 }
                 Key key = keyboardLayout.lookupKey(row, col);
                 if (key != null) {
-                    HTMLElement keySpanElt = generateKeyElt(document, key);
+                    HTMLElement keySpanElt = generateKeyElt(document, key, isHeatmap);
                     divElt.appendChild(keySpanElt);
                 } else {
                     HTMLElement keyGapSpanElt = generateKeyGapElt(document, STD_KEY_WIDTH);
@@ -61,10 +60,22 @@ public class HTMLKeyboardRenderer {
         return divElt;
     }
 
-    private HTMLElement generateKeyElt(Document document, Key key) {
+    private HTMLElement generateKeyElt(Document document, Key key, boolean isHeatmap) {
         HTMLElement spanElt = (HTMLElement) document.createElement("span");
         spanElt.setAttribute("class", "key");
-        String backgroundColor = KEY_COLOR_FINGERS[key.getFinger()];
+        String backgroundColor = null;
+        if (isHeatmap) {
+            Double keyFreqValue = keyFreq.get(key);
+            if (keyFreqValue != null) {
+                int redComponent = Math.min(255, 160 + (int) (keyFreqValue*1000));
+                int blueGreenComponent = Math.max(0, 160 - (int) (keyFreqValue*1500));
+                backgroundColor =  "rgb(" + redComponent + "," + blueGreenComponent + "," + blueGreenComponent + ")";
+            }
+
+        } else {
+            backgroundColor = KEY_COLOR_FINGERS[key.getFinger()];
+        }
+
         if (backgroundColor != null) {
             spanElt.setAttribute("style", "background-color:" + backgroundColor);
         } else {
