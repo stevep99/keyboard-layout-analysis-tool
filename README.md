@@ -49,7 +49,7 @@ If compiling was successful, you should be run the provided scripts:
 
 The ```resources``` folder contains all the input files which are used by the analysis model:
 
-- A list of alternative keyboard layouts in ```resources/*.keyb```.
+- A list of alternative keyboard layouts in ```resources/layout/*.keyb```.
 
 - Letter and bigram frequency tables in ```resources/freq/*```.
 

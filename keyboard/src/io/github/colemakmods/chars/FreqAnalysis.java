@@ -19,13 +19,18 @@ public class FreqAnalysis {
 
 	private final static String DEFAULT_ALPHABET = 
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final static int DEFAULT_MAX_UNICODE = 0x10FFFF;
 	
     private List<CharFreq> charFreqList;
     private List<BigramFreq> bigramFreqList;
+    private int maxUnicode = DEFAULT_MAX_UNICODE;
 
-    public FreqAnalysis(String alphabet) {
-        charFreqList = CharFreq.initialize(alphabet);
-        bigramFreqList = BigramFreq.initialize(alphabet);
+    public FreqAnalysis(String alphabet, int maxUnicode) {
+        this.charFreqList = CharFreq.initialize(alphabet);
+        this.bigramFreqList = BigramFreq.initialize(alphabet);
+        if (maxUnicode > 0) {
+            this.maxUnicode = maxUnicode;
+        }
     }
 
     public long analyze(File file) {
@@ -85,8 +90,8 @@ public class FreqAnalysis {
                 CharFreq cf = cCache.get(c);
                 if (cf != null) {
                     cf.addCount();
-                } else if (k != 65533) {
-                    //for characters only - add to list if new character found
+                } else if (k < maxUnicode && k != 65533) {
+                    //for characters: add new item to list if new character is within requested unicode range
                     cf = new CharFreq((char)k, 1);
                     charFreqList.add(cf);
                     cCache.put(cf.getChar(), cf);
@@ -147,25 +152,27 @@ public class FreqAnalysis {
 
     public static void main(String args[]) {
         if (args.length < 1) {
-            System.out.println("Usage:  FreqAnalysis  [-f]  [-a alphabet]  filename");
+            System.out.println("Usage:  FreqAnalysis  [-f]  [-a alphabet]  [-u max_unicode] filename");
             System.exit(0);
         }
 
         String wordFile = args[args.length-1];
         String alphabet = DEFAULT_ALPHABET;
+        int maxUnicode = -1;
         boolean showNormalized = false;
 
         for (int i=0; i<args.length-1; ++i) {
             if (args[i].equals("-a")) {
                 alphabet = args[++i].toUpperCase();
-            }
-            if (args[i].equals("-f")) {
+            } else if (args[i].equals("-u")) {
+                maxUnicode = Integer.parseInt(args[++i]);
+            } else if (args[i].equals("-f")) {
                 showNormalized = true;
             }
         }
 
         long timeStart = System.currentTimeMillis();
-        FreqAnalysis fa = new FreqAnalysis(alphabet);
+        FreqAnalysis fa = new FreqAnalysis(alphabet, maxUnicode);
         long i = fa.analyze(new File(wordFile));
         if (showNormalized) {
             fa.normalize();

@@ -29,8 +29,9 @@ public class ResourceStatic {
 
     public final static Resource[] ALL_FREQS = {
         new Resource("en", "Default English data", "freq/en_books.freq"),
-        new Resource("en_norvig", "English Data from Peter Norvig, norvig.com/mayzner.html", "freq/en_norvig.freq"),
-        new Resource("java", "Data from Java source files", "freq/java.freq"),
+        new Resource("en_norvig", "English Data from\n  Peter Norvig, norvig.com/mayzner.html", "freq/en_norvig.freq"),
+        new Resource("en_wikipedia", "Data from the 100 most popular\n  Wikipedia articles", "freq/en_wikipedia.freq"),
+        new Resource("linux_src", "Data from the Linux source code", "freq/linux_src.freq"),
         new Resource("da", "Danish data", "freq/practical_cryptography/da_pc.freq"),
         new Resource("de", "German data", "freq/practical_cryptography/de_pc.freq"),
         new Resource("es", "Spanish data", "freq/practical_cryptography/es_pc.freq"),

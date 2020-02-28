@@ -22,7 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.20";
+    public static final String VERSION = "v1.21";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();

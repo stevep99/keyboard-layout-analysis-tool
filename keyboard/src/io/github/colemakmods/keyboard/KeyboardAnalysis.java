@@ -58,7 +58,7 @@ public class KeyboardAnalysis {
             } else if (args[i].equals("-w")) {
                 String wordFile = args[++i];
 
-                FreqAnalysis fa = new FreqAnalysis(keyboardLayout.getAlphabet());
+                FreqAnalysis fa = new FreqAnalysis(keyboardLayout.getAlphabet(), -1);
                 fa.analyze(new File(wordFile));
 
                 charFreqs = fa.getCharFreqs();
