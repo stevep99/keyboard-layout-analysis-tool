@@ -9,6 +9,8 @@ The model used is defined in more detail at http://colemakmods.github.io/mod-dh/
 
 If you want to use this code to analyze layouts but would rather avoid compiling the code, then use this online version of the app: http://colemakmods.github.io/mod-dh/analyze.html
 
+If you want to know more about the letter frequency distrubution statistics used by this analyzer, take a look at this page describing the [frequency data](data/README.md).
+
 The project contains two modules: "keyboard" and "keyboard-web"
 
 ## The "keyboard" Module
