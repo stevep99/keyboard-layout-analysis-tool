@@ -32,7 +32,7 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         showFingerFreq(layoutResults.getFingerFreq(), out);
         showFingerBigramFreq(layoutResults.getSameFingerBigrams(), out);
         showSameFingerBigrams(layoutResults.getSameFingerBigrams(), maxFingerBigrams, out);
-        showFingerEffortSimple(layoutResults.getFingerEffort(), out);
+        showFingerEffort(layoutResults.getFingerEffort(), out);
     }
 
     private void showMessages(List<String> messages, PrintStream out) {
@@ -110,20 +110,21 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         out.println("</table>");
     }
 
-    private void showFingerEffortSimple(double[][] fingerEffort, PrintStream out) {
+    private void showFingerEffort(double[][] fingerEffort, PrintStream out) {
         out.println("<b><u>Finger Effort</u></b>");
         out.println("<table>");
         out.println("<tr>");
-        out.println("<th> </th><th>position</th><th>bigrams</th><th>total</th>");
+        out.println("<th> </th><th>base</th><th>s-bigrams</th><th>n-bigrams</th><th>total</th>");
         out.println("</tr>");
         double[] fingerEffortTotal = new double[3];
         for (int i = 0; i < 10; ++i) {
-            double bigramEffort = fingerEffort[1][i] + fingerEffort[2][i];
-            double allEffort = fingerEffort[0][i] + bigramEffort;
+            double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
             if (fingerEffort[0][i] > 0) {
                 out.println("<tr>");
                 out.println("<td>finger " + i + "</td><td>" + format(fingerEffort[0][i], 5) + "</td><td>"
-                        + format(bigramEffort,5) + "</td><td>" + format(allEffort,5) + "</td>");
+                    + format(fingerEffort[1][i],5) + "</td><td>"
+                    + format(fingerEffort[2][i],5) + "</td><td>"
+                    + format(allEffort,5) + "</td>");
                 out.println("</tr>");
                 fingerEffortTotal[0] += fingerEffort[0][i];
                 fingerEffortTotal[1] += fingerEffort[1][i];
@@ -134,7 +135,9 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         double allEffortTotal = fingerEffortTotal[0] + bigramEffortTotal;
         out.println("<tr class=\"row_total\">");
         out.println("<td>total *</td><td>" + format(fingerEffortTotal[0], 5) + "</td><td>"
-                + format(bigramEffortTotal, 5) + "</td><td>" + format(allEffortTotal,5) + "</td>");
+            + format(fingerEffortTotal[1], 5) + "</td><td>"
+            + format(fingerEffortTotal[2], 5) + "</td><td>"
+            + format(allEffortTotal,5) + "</td>");
         out.println("</tr>");
         out.println("</table>");
     }
