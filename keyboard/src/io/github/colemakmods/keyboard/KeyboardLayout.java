@@ -88,7 +88,7 @@ public class KeyboardLayout {
     }
 
     private boolean validate() {
-        //check
+        //check for duplicate characters
         for (int i=0; i < keyList.size(); ++i) {
             for (int j=0; j < keyList.size(); ++j) {
                 if (i != j) {

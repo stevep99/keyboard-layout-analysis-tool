@@ -82,7 +82,7 @@ public class CharFreq {
 
     public static CharFreq findByChar(char c, List<CharFreq> charFreqList) {
         for (CharFreq cf : charFreqList) {
-            if (Character.toUpperCase(c) == cf.getChar()) {
+            if (c == cf.getChar()) {
                 return cf;
             }
         }

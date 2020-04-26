@@ -12,14 +12,23 @@ public class Key {
     private double effort;
 
     public Key(String chars, int row, int col) {
-        this.chars = chars.toUpperCase().toCharArray();
+        if (chars.length() == 1) {
+            char shifted = generateDefaultShifted(chars.charAt(0));
+            if (shifted != '\0') {
+                this.chars = new char[]{chars.charAt(0), shifted};
+            } else {
+                this.chars = new char[]{chars.charAt(0)};
+            }
+        } else {
+            this.chars = chars.toCharArray();
+        }
         this.row = row;
         this.col = col;
         this.finger = getDefaultFinger();
     }
 
     public char getName() {
-        return chars[0];
+        return Character.toUpperCase(chars[0]);
     }
 
     public int getRow() {
@@ -73,6 +82,54 @@ public class Key {
             return col;
         } else {
             return 9;
+        }
+    }
+
+    private static char generateDefaultShifted(char ch) {
+        if (Character.isAlphabetic(ch)) {
+            return Character.toUpperCase(ch);
+        }
+        switch (ch) {
+            case '1':
+                return '!';
+            case '2':
+                return '@';
+            case '3':
+                return '#';
+            case '4':
+                return '$';
+            case '5':
+                return '%';
+            case '6':
+                return '^';
+            case '7':
+                return '&';
+            case '8':
+                return '*';
+            case '9':
+                return '(';
+            case '0':
+                return ')';
+            case '\'':
+                return '\"';
+            case '-':
+                return '_';
+            case '=':
+                return '+';
+            case '[':
+                return '{';
+            case ']':
+                return '}';
+            case ';':
+                return ':';
+            case ',':
+                return '<';
+            case '.':
+                return '>';
+            case '/':
+                return '?';
+            default:
+                return '\0';
         }
     }
 
