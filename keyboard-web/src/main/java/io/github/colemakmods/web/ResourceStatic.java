@@ -12,7 +12,7 @@ public class ResourceStatic {
         new Resource("Dvorak", "", "layout/dvorak.keyb"),
         new Resource("Workman", "", "layout/workman.keyb"),
         new Resource("MTGAP", "", "layout/mtgap.keyb"),
-        new Resource("BEAKL", "", "layout/beakl.keyb"),
+        new Resource("qgmlwyfub", "", "layout/qgmlwyfub.keyb"),
         new Resource("Asset", "", "layout/asset.keyb"),
         new Resource("Norman", "", "layout/norman.keyb"),
         new Resource("Qwpr", "", "layout/qwpr.keyb"),

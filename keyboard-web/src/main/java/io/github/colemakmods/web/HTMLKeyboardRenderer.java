@@ -15,7 +15,7 @@ public class HTMLKeyboardRenderer {
     private KeyboardLayout keyboardLayout;
     private HashMap<Key, Double> keyFreq;
 
-    private final static int STD_KEY_WIDTH = 24; //standard key width in pixels
+    private final static int STD_KEY_WIDTH = 30; //standard key width in pixels
 
     private static final String[] KEY_COLOR_FINGERS = {
             "#80c4c4",
