@@ -30,7 +30,7 @@ The app is built using [gradle](https://gradle.org/).
 
 1. Ensure you have a recent JDK (recommended version 8+) installed.
 2. ```cd keyboard```
-3. ```./gradlew jar```
+3. ```../gradlew jar```
 4. If compiling was successful, you should have generated a file ```keyboard/build/libs/keyboard-1.0-SNAPSHOT.jar```.
 
 ### Running
@@ -65,13 +65,13 @@ You probably can ignore this module, it is simply for generating the layout anal
 
 ### Compiling
 
-The module is build using [maven](https://maven.apache.org/), and uses [TeaVM](http://teavm.org/) to generate the JavaScript parts.
+The module is build using [gradle](https://gradle.org/), and uses [TeaVM](http://teavm.org/) to generate the JavaScript parts.
 
 1. Ensure you have a recent JDK (recommended version 8+) installed.
 2. Ensure you have maven installed.
 3. ```cd keyboard-web```
-4. copy the resource files ```prepare-resources.sh```
-4. ```mvn package```
-5. If compiling was successful, you should have the generated web files in ```keyboard-web/target```
+4. copy the resource files ```./prepare-resources.sh```
+4. ```../gradlew teavm copyresources```
+5. If compiling was successful, you should have the generated web files in ```keyboard-web/build```
 
 
