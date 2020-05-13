@@ -23,7 +23,7 @@ public class ResourceLoader {
     }
 
     public static void loadKeyboardResources() {
-        for (Resource keyboardResource : ResourceStatic.ALL_KEYBOARDS) {
+        for (Resource keyboardResource : ResourceStatic.ALL_LAYOUTS) {
             keyboardResource.setActive(true);
             ResourceLoader rl = new ResourceLoader(keyboardResource);
             rl.loadFile();
@@ -65,14 +65,14 @@ public class ResourceLoader {
         updateLoadingState();
     }
 
-    public static void updateLoadingState() {
+    private static void updateLoadingState() {
         int loaded = 0;
         int total = 0;
         for (Resource freqResource : ResourceStatic.ALL_FREQS) {
             if (freqResource.isActive()) ++total;
             if (freqResource.getText() != null) ++loaded;
         }
-        for (Resource keyboardResource : ResourceStatic.ALL_KEYBOARDS) {
+        for (Resource keyboardResource : ResourceStatic.ALL_LAYOUTS) {
             if (keyboardResource.isActive()) ++total;
             if (keyboardResource.getText() != null) ++loaded;
         }

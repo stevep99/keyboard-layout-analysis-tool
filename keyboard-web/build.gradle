@@ -11,14 +11,14 @@ buildscript {
     }
 }
 
-def teavm_version = '0.6.0'
+def teavm_version = '0.6.1'
 
 teavm {
     mainClass = 'io.github.colemakmods.web.KeyboardClient'
     sourceFilesCopied = false
     sourceMapsGenerated = false
     minifying = true
-    targetType = "JAVASCRIPT";
+    targetType = "JAVASCRIPT"
 }
 
 

@@ -81,12 +81,16 @@ public class HTMLKeyboardRenderer {
         } else {
             spanElt.setHidden(true);
         }
-        if (keyFreq != null) {
+        if (isHeatmap) {
             Double keyFreqValue = keyFreq.get(key);
             if (keyFreqValue != null) {
-                spanElt.setAttribute("title", "Key " + new String(key.getChars()) + " "
+                spanElt.setAttribute("title", "Key " + new String(key.getChars()) + " Usage: "
                         + JSFormatter.toFixed(keyFreqValue * 100, 2) + "%");
             }
+        } else {
+            spanElt.setAttribute("title", "Key " + new String(key.getChars()) + "  Effort: "
+                + JSFormatter.toFixed(key.getEffort(), 1));
+
         }
         spanElt.appendChild(document.createTextNode(String.valueOf(key.getName())));
         return spanElt;

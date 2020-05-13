@@ -6,7 +6,7 @@ package io.github.colemakmods.web;
 
 public class ResourceStatic {
 
-    public final static Resource[] ALL_KEYBOARDS = {
+    public final static Resource[] ALL_LAYOUTS = {
         new Resource("Mod-DH", "", "layout/colemak_dh.keyb"),
         new Resource("Colemak", "", "layout/colemak.keyb"),
         new Resource("Dvorak", "", "layout/dvorak.keyb"),

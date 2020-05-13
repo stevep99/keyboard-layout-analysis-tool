@@ -16,13 +16,12 @@ import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLOptionElement;
 import org.teavm.jso.dom.html.HTMLSelectElement;
-import org.teavm.jso.dom.html.HTMLInputElement;
 
 import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.22";
+    public static final String VERSION = "v1.23";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();
@@ -32,12 +31,13 @@ public class KeyboardClient {
     private static HTMLSelectElement configSelect = (HTMLSelectElement) document.getElementById("config-select");
     private static HTMLTextAreaElement layoutInput = (HTMLTextAreaElement)document.getElementById("layout-input");
     private static HTMLTextAreaElement configInput = (HTMLTextAreaElement) document.getElementById("config-input");
+    private static HTMLTextAreaElement modalLayoutInput = (HTMLTextAreaElement)document.getElementById("modal-layout-input");
+    private static HTMLTextAreaElement modalConfigInput = (HTMLTextAreaElement) document.getElementById("modal-config-input");
+    private static HTMLElement saveInputButton = document.getElementById("save-input-button");
+    private static HTMLElement closeInputButton = document.getElementById("close-input-button");
     private static HTMLElement analyzeButton = document.getElementById("analyze-button");
-    private static HTMLElement keyboardPanel = document.getElementById("keyboard-panel");
     private static HTMLElement keyboardPanelFingers = document.getElementById("keyboard-panel-fingers");
     private static HTMLElement keyboardPanelHeatmap = document.getElementById("keyboard-panel-heatmap");
-    private static HTMLInputElement keyboardOptionFingers = (HTMLInputElement) document.getElementById("keyboard-option-fingers");
-    private static HTMLInputElement keyboardOptionHeatmap = (HTMLInputElement) document.getElementById("keyboard-option-heatmap");
     private static HTMLElement outputPanel = document.getElementById("output-panel");
     private static boolean readyState = false;
     private static Resource selectedFreqResource;
@@ -48,7 +48,7 @@ public class KeyboardClient {
         versionText.setInnerHTML(VERSION);
 
         setOutput("Initializing...");
-        setKeyboadPanel(null, null);
+        setKeyboadHeatmapPanel(null);
 
         String freqResourceParam = DEFAULT_FREQ_RESOURCE;
 
@@ -73,57 +73,79 @@ public class KeyboardClient {
         ResourceLoader.loadConfigResources();
 
         //layout selector
-        HTMLOptionElement layoutOptionDummy = (HTMLOptionElement) document.getElementById("layoutOptionDummy");
+        HTMLOptionElement layoutOptionCustom = (HTMLOptionElement) document.getElementById("layoutOptionCustom");
         layoutSelect.getOptions().remove(0);
-        for (Resource keyboardResource : ResourceStatic.ALL_KEYBOARDS) {
-            HTMLOptionElement layoutOption = (HTMLOptionElement)layoutOptionDummy.cloneNode(true);
+        for (Resource keyboardResource : ResourceStatic.ALL_LAYOUTS) {
+            HTMLOptionElement layoutOption = (HTMLOptionElement)layoutOptionCustom.cloneNode(true);
             layoutOption.setText(keyboardResource.getName());
             layoutSelect.getOptions().add(layoutOption);
         }
+        layoutSelect.getOptions().add(layoutOptionCustom);
         layoutSelect.addEventListener("change", new EventListener() {
             @Override
             public void handleEvent(Event event) {
-                Resource keyboardResource = ResourceStatic.ALL_KEYBOARDS[layoutSelect.getSelectedIndex()];
-                setLayoutInput(keyboardResource.getText());
-                setKeyboadPanel(null, null);
-                setOutput(null);
+                int selected = layoutSelect.getSelectedIndex();
+                if (selected < ResourceStatic.ALL_LAYOUTS.length) {
+                    //update input layout unless "custom" is selected
+                    Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[selected];
+                    setLayoutInput(keyboardResource.getText());
+
+                    refreshInputKeyboardPanel();
+                    setKeyboadHeatmapPanel(null);
+                    setOutput(null);
+                }
             }
         });
 
         //config selector
-        HTMLOptionElement configOptionDummy = (HTMLOptionElement) document.getElementById("configOptionDummy");
+        HTMLOptionElement configOptionCustom = (HTMLOptionElement) document.getElementById("configOptionCustom");
         configSelect.getOptions().remove(0);
         for (Resource configResource : ResourceStatic.ALL_CONFIGS) {
-            HTMLOptionElement configOption = (HTMLOptionElement)configOptionDummy.cloneNode(true);
+            HTMLOptionElement configOption = (HTMLOptionElement)configOptionCustom.cloneNode(true);
             configOption.setText(configResource.getName());
             configOption.setTitle(configResource.getTitle());
             configSelect.getOptions().add(configOption);
         }
-        configSelect.setSelectedIndex(2); //select Ergonomic as default option
+        configSelect.getOptions().add(configOptionCustom);
         configSelect.addEventListener("change", new EventListener() {
             @Override
             public void handleEvent(Event event) {
-                Resource configResource = ResourceStatic.ALL_CONFIGS[configSelect.getSelectedIndex()];
-                setConfigInput(configResource.getText());
-                setKeyboadPanel(null, null);
-                setOutput(null);
+                int selected = configSelect.getSelectedIndex();
+                if (selected < ResourceStatic.ALL_CONFIGS.length) {
+                    //update input config unless "custom" is selected
+                    Resource configResource = ResourceStatic.ALL_CONFIGS[selected];
+                    setConfigInput(configResource.getText());
+
+                    refreshInputKeyboardPanel();
+                    setKeyboadHeatmapPanel(null);
+                    setOutput(null);
+                }
             }
         });
 
-        //keyboard visualization selector
-        keyboardOptionFingers.addEventListener("click", new EventListener<Event>() {
+        saveInputButton.addEventListener("click", new EventListener() {
             @Override
             public void handleEvent(Event event) {
-                keyboardPanelFingers.setAttribute("style", "display:block;font-size:125%;padding:0.5ex");
-                keyboardPanelHeatmap.setAttribute("style", "display:none");
-            }
-        });
+                //copy the layout text from the modal to the input field
+                if (!modalLayoutInput.getValue().equals(layoutInput.getValue())) {
+                    layoutInput.setValue(modalLayoutInput.getValue());
+                    //select the "Custom" option if config has changed
+                    layoutSelect.setSelectedIndex(ResourceStatic.ALL_LAYOUTS.length);
+                }
 
-        keyboardOptionHeatmap.addEventListener("click", new EventListener<Event>() {
-            @Override
-            public void handleEvent (Event event) {
-                keyboardPanelFingers.setAttribute("style", "display:none");
-                keyboardPanelHeatmap.setAttribute("style", "display:block;font-size:125%;padding:0.5ex");
+                //copy the config text from the modal to the input field
+                if (!modalConfigInput.getValue().equals(configInput.getValue())) {
+                    configInput.setValue(modalConfigInput.getValue());
+                    //select the "Custom" option if config has changed
+                    configSelect.setSelectedIndex(ResourceStatic.ALL_CONFIGS.length);
+                }
+
+                //close the modal dialog
+                closeInputButton.click();
+
+                refreshInputKeyboardPanel();
+                setKeyboadHeatmapPanel(null);
+                setOutput(null);
             }
         });
 
@@ -138,13 +160,40 @@ public class KeyboardClient {
         });
     }
 
+    private static void refreshInputKeyboardPanel() {
+        KeyboardLayout keyboardLayout = new KeyboardLayout();
+        keyboardLayout.parse(layoutInput.getValue(), "");
+        FingerConfig fingerConfig = new FingerConfig();
+        fingerConfig.parse(keyboardLayout, configInput.getValue());
+        HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout, null);
+
+        if (keyboardPanelFingers.getFirstChild() != null) {
+            keyboardPanelFingers.clear();
+        }
+
+        HTMLElement fingersElement = keyboardRenderer.generate(document, false);
+        if (fingersElement != null) {
+            keyboardPanelFingers.appendChild(fingersElement);
+            keyboardPanelFingers.setAttribute("style", "display:block");
+        } else {
+            keyboardPanelFingers.setAttribute("style", "display:none");
+        }
+
+    }
+
     public static void setReadyState(boolean state) {
         readyState = state;
         if (readyState) {
-            Resource keyboardResource = ResourceStatic.ALL_KEYBOARDS[layoutSelect.getSelectedIndex()];
+            //set Mod-DH as the default layout
+            layoutSelect.setSelectedIndex(0);
+            Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[0];
             setLayoutInput(keyboardResource.getText());
-            Resource configResource = ResourceStatic.ALL_CONFIGS[configSelect.getSelectedIndex()];
+            //select Ergonomic as default config
+            configSelect.setSelectedIndex(2);
+            Resource configResource = ResourceStatic.ALL_CONFIGS[2];
             setConfigInput(configResource.getText());
+
+            refreshInputKeyboardPanel();
         }
     }
 
@@ -169,7 +218,7 @@ public class KeyboardClient {
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
 
         HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout, layoutResults.getKeyFreq());
-        setKeyboadPanel(keyboardRenderer.generate(document, false), keyboardRenderer.generate(document, true));
+        setKeyboadHeatmapPanel(keyboardRenderer.generate(document, true));
 
         try {
             KeyboardAnalysisReport report = new KeyboardAnalysisWebHTMLReport(5);
@@ -200,20 +249,16 @@ public class KeyboardClient {
         configInput.setValue(input);
     }
 
-    public static void setKeyboadPanel(HTMLElement fingerElt, HTMLElement heatmapElt) {
-        if (keyboardPanelFingers.getFirstChild() != null) {
-            keyboardPanelFingers.clear();
-        }
+    public static void setKeyboadHeatmapPanel(HTMLElement heatmapElt) {
         if (keyboardPanelHeatmap.getFirstChild() != null) {
             keyboardPanelHeatmap.clear();
         }
 
-        if (fingerElt != null && heatmapElt != null) {
-            keyboardPanelFingers.appendChild(fingerElt);
+        if (heatmapElt != null) {
             keyboardPanelHeatmap.appendChild(heatmapElt);
-            keyboardPanel.setAttribute("style", "display:block");
+            keyboardPanelHeatmap.setAttribute("style", "display:block");
         } else {
-            keyboardPanel.setAttribute("style", "display:none");
+            keyboardPanelHeatmap.setAttribute("style", "display:none");
         }
     }
 

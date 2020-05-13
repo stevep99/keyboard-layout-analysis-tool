@@ -78,7 +78,7 @@ public class Key {
             return 3;
         } else if (col == 5) {
             return 6;
-        } else if (col >= 6 && col <= 9) {
+        } else if (col <= 9) {
             return col;
         } else {
             return 9;
@@ -87,7 +87,11 @@ public class Key {
 
     private static char generateDefaultShifted(char ch) {
         if (Character.isAlphabetic(ch)) {
-            return Character.toUpperCase(ch);
+            if (Character.isLowerCase(ch)) {
+                return Character.toUpperCase(ch);
+            } else {
+                return Character.toLowerCase(ch);
+            }
         }
         switch (ch) {
             case '1':
