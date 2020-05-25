@@ -31,7 +31,14 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         showMessages(layoutResults.getMessages(), out);
         showFingerFreq(layoutResults.getFingerFreq(), out);
         showFingerBigramFreq(layoutResults.getSameFingerBigrams(), out);
+        out.print("<div style=\"display: table-row\">");
+        out.print("<div style=\"display: table-cell\">");
         showSameFingerBigrams(layoutResults.getSameFingerBigrams(), maxFingerBigrams, out);
+        out.print("</div>");
+        out.print("<div style=\"display: table-cell;padding-left:2ex\">");
+        showNeighbourFingerBigrams(layoutResults.getNeighbourFingerBigrams(), maxFingerBigrams, out);
+        out.print("</div>");
+        out.print("</div>");
         showFingerEffort(layoutResults.getFingerEffort(), out);
     }
 
@@ -53,16 +60,16 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
             int right = 9-i;
             if (fingerFreq[left] > 0 || fingerFreq[right] > 0) {
                 out.println("<tr>");
-                out.println("<td>finger " + left + "</td><td>" + format(fingerFreq[left], 5)
-                        + "</td><td>&nbsp;finger " + right + "</td><td>" + format(fingerFreq[right], 5) + "</td>");
+                out.println("<td>finger " + left + " </td><td>" + format(fingerFreq[left]*100, 2)
+                        + "%</td><td>&nbsp;finger " + right + " </td><td>" + format(fingerFreq[right]*100, 2) + "%</td>");
                 out.println("</tr>");
             }
             totalLeft += fingerFreq[left];
             totalRight += fingerFreq[right];
         }
         out.println("<tr class=\"row_total\">");
-        out.println("<td class=\"center\">total L</td><td>" + format(totalLeft, 5)
-                + "</td><td class=\"center\">&nbsp;total R</td><td>" + format(totalRight, 5) + "</td>");
+        out.println("<td class=\"center\">total L </td><td>" + format(totalLeft*100, 2)
+                + "%</td><td class=\"center\">total R </td><td>" + format(totalRight*100, 2) + "%</td>");
         out.println("</tr>");
         out.println("</table>");
     }
@@ -78,16 +85,16 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
             int right = 9-i;
             if (fingerBigramFreq[left] > 0 || fingerBigramFreq[right] > 0) {
                 out.println("<tr>");
-                out.println("<td>finger " + left + "</td><td>" + format(fingerBigramFreq[left], 5)
-                        + "</td><td>&nbsp;finger " + right + "</td><td>" + format(fingerBigramFreq[right], 5) + "</td>");
+                out.println("<td>finger " + left + " </td><td>" + format(fingerBigramFreq[left]*100, 3)
+                        + "%</td><td>&nbsp;finger " + right + " </td><td>" + format(fingerBigramFreq[right]*100, 3) + "%</td>");
                 out.println("</tr>");
                 total += fingerBigramFreq[left];
                 total += fingerBigramFreq[right];
             }
         }
         out.println("<tr class=\"row_total\">");
-        out.println("<td class=\"center\" colspan=\"2\">total</td><td class=\"center\" colspan=\"2\">"
-                + format(total,5)  + "</td>");
+        out.println("<td class=\"center\" colspan=\"2\" style=\"text-align:right\">total</td><td class=\"center\" colspan=\"2\">"
+                + format(total*100,3)  + "%</td>");
         out.println("</tr>");
         out.println("</table>");
     }
@@ -98,9 +105,28 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         int count = 0;
         for (FingerBigram fingerBigram : sameFingerBigrams) {
             out.println("<tr>");
-            out.println("<td>finger " + fingerBigram.getKey1().getFinger() + "</td><td>"
-                    + fingerBigram.getBigramFreq().getString() + "</td><td>"
-                    + format(fingerBigram.getBigramFreq().getFreq(), 6) + "</td>");
+            out.println("<td>finger " + fingerBigram.getKey1().getFinger() + " </td><td>"
+                    + fingerBigram.getBigramFreq().getString() + " </td><td>"
+                    + format(fingerBigram.getBigramFreq().getFreq()*100, 3) + "%</td>");
+
+            out.println("</tr>");
+            if (++count >= maxFingerBigrams) {
+                break;
+            }
+        }
+        out.println("</table>");
+    }
+
+    private void showNeighbourFingerBigrams(List<FingerBigram> neighbourFingerBigrams, int maxFingerBigrams, PrintStream out) {
+        out.println("<b><u>Top Neighbour-Finger Bigrams</u></b>");
+        out.println("<table>");
+        int count = 0;
+        for (FingerBigram fingerBigram : neighbourFingerBigrams) {
+            out.println("<tr>");
+            out.println("<td>finger " + fingerBigram.getKey1().getFinger() + "-"
+                + fingerBigram.getKey2().getFinger() + " </td><td>"
+                + fingerBigram.getBigramFreq().getString() + " </td><td>"
+                + format(fingerBigram.getBigramFreq().getFreq()*100, 3) + "%</td>");
 
             out.println("</tr>");
             if (++count >= maxFingerBigrams) {
@@ -121,7 +147,7 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
             double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
             if (fingerEffort[0][i] > 0) {
                 out.println("<tr>");
-                out.println("<td>finger " + i + "</td><td>" + format(fingerEffort[0][i], 5) + "</td><td>"
+                out.println("<td>finger " + i + " </td><td>" + format(fingerEffort[0][i], 5) + "</td><td>"
                     + format(fingerEffort[1][i],5) + "</td><td>"
                     + format(fingerEffort[2][i],5) + "</td><td>"
                     + format(allEffort,5) + "</td>");
@@ -134,9 +160,9 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         double bigramEffortTotal = fingerEffortTotal[1] + fingerEffortTotal[2];
         double allEffortTotal = fingerEffortTotal[0] + bigramEffortTotal;
         out.println("<tr class=\"row_total\">");
-        out.println("<td>total *</td><td>" + format(fingerEffortTotal[0], 5) + "</td><td>"
-            + format(fingerEffortTotal[1], 5) + "</td><td>"
-            + format(fingerEffortTotal[2], 5) + "</td><td>"
+        out.println("<td>total * </td><td>" + format(fingerEffortTotal[0], 5) + "</td><td> "
+            + format(fingerEffortTotal[1], 5) + "</td><td> "
+            + format(fingerEffortTotal[2], 5) + "</td><td> "
             + format(allEffortTotal,5) + "</td>");
         out.println("</tr>");
         out.println("</table>");
