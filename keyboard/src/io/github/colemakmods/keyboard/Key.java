@@ -5,30 +5,21 @@ package io.github.colemakmods.keyboard;
  */
 public class Key {
 
-    private char[] chars;
     private int row;
     private int col;
+    private String chars;
     private int finger;
     private double effort;
 
-    public Key(String chars, int row, int col) {
-        if (chars.length() == 1) {
-            char shifted = generateDefaultShifted(chars.charAt(0));
-            if (shifted != '\0') {
-                this.chars = new char[]{chars.charAt(0), shifted};
-            } else {
-                this.chars = new char[]{chars.charAt(0)};
-            }
-        } else {
-            this.chars = chars.toCharArray();
-        }
+    public Key(int row, int col, String chars) {
         this.row = row;
         this.col = col;
+        setChars(chars);
         this.finger = getDefaultFinger();
     }
 
     public char getName() {
-        return Character.toUpperCase(chars[0]);
+        return Character.toUpperCase(chars.charAt(0));
     }
 
     public int getRow() {
@@ -59,15 +50,28 @@ public class Key {
         this.effort = effort;
     }
 
-    public char[] getChars() {
+    public String getChars() {
         return chars;
     }
 
     public boolean hasChar(char ch) {
-        for (char c : chars) {
+        for (char c : chars.toCharArray()) {
             if (c == Character.toUpperCase(ch)) return true;
         }
         return false;
+    }
+
+    public void setChars(String chars) {
+        if (chars.length() == 1) {
+            char shifted = generateDefaultShifted(chars.charAt(0));
+            if (shifted != '\0') {
+                this.chars = String.valueOf(chars.charAt(0)) + shifted;
+            } else {
+                this.chars = chars;
+            }
+        } else {
+            this.chars = chars;
+        }
     }
 
     private int getDefaultFinger() {

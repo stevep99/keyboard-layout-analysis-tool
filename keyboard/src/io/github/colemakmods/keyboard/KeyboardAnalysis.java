@@ -27,25 +27,25 @@ public class KeyboardAnalysis {
             return;
         }
 
-        File keyboardFile = new File(args[args.length-1]);
-        KeyboardLayout keyboardLayout = new KeyboardLayout();
-        boolean ok = keyboardLayout.parse(keyboardFile);
-        if (!ok) {
-            return;
-        }
-        keyboardLayout.dump(System.out);
-
         String outputOptions = null;
         List<CharFreq> charFreqs = null;
         List<BigramFreq> bigramFreqs = null;
 
-        FingerConfig fingerConfig = new FingerConfig();
+        File keyboardFile = new File(args[args.length-1]);
+        KeyboardLayout keyboardLayout = new KeyboardLayout(keyboardFile.getName());
+
+        boolean valid = KeyboardMapping.parse(keyboardLayout, keyboardFile);
+        if (!valid) return;
+        keyboardLayout.dumpLayout(System.out);
+
         for (int i=0; i<args.length-1; ++i) {
             if (args[i].equals("-c")) {
                 String[] configFiles = args[++i].split(",");
                 for (String configFile : configFiles) {
-                    fingerConfig.parse(keyboardLayout, new File(configFile));
+                    valid = KeyboardConfig.parse(keyboardLayout, new File(configFile));
+                    if (!valid) return;
                 }
+                keyboardLayout.dumpConfig(System.out);
 
             } else if (args[i].equals("-f")) {
                 String frequencyFile = args[++i];
@@ -68,7 +68,9 @@ public class KeyboardAnalysis {
                 outputOptions = args[++i];
             }
         }
-        fingerConfig.dump(keyboardLayout, System.out);
+
+        valid = keyboardLayout.validate();
+        if (!valid) return;
 
         if (charFreqs == null || bigramFreqs == null) {
             exitHelp();
@@ -156,7 +158,7 @@ public class KeyboardAnalysis {
                 Key key = keyboardLayout.lookupKey(row, col);
                 if (key != null) {
                     Double freqTotal = 0.;
-                    for (char ch : key.getChars()) {
+                    for (char ch : key.getChars().toCharArray()) {
                         CharFreq cf = CharFreq.findByChar(ch, charFreqs);
                         if (cf != null) freqTotal += cf.getFreq();
                     }
@@ -209,7 +211,7 @@ public class KeyboardAnalysis {
             Key key1 = keyboardLayout.lookupKey(chars[0]);
             Key key2 = keyboardLayout.lookupKey(chars[1]);
             if (key1 != null && key2 != null) {
-                if (chars[0] != chars[1] && FingerConfig.isSameFinger(key1.getFinger(), key2.getFinger())) {
+                if (chars[0] != chars[1] && KeyboardConfig.isSameFinger(key1.getFinger(), key2.getFinger())) {
                     FingerBigram fingerBigram = new FingerBigram(key1, key2, bigramFreq);
                     fingerBigrams.add(fingerBigram);
                 }
@@ -235,8 +237,8 @@ public class KeyboardAnalysis {
             Key key1 = keyboardLayout.lookupKey(chars[0]);
             Key key2 = keyboardLayout.lookupKey(chars[1]);
             if (key1 != null && key2 != null) {
-                if (FingerConfig.isNeighbourFinger(key1.getFinger(), key2.getFinger())) {
-                    int outermostFinger = FingerConfig.getOutermostFinger(key1.getFinger(), key2.getFinger());
+                if (KeyboardConfig.isNeighbourFinger(key1.getFinger(), key2.getFinger())) {
+                    int outermostFinger = KeyboardConfig.getOutermostFinger(key1.getFinger(), key2.getFinger());
                     if (keyboardLayout.hasPenaltyNeighbourFinger(outermostFinger)) {
                         FingerBigram fingerBigram = new FingerBigram(key1, key2, bigramFreq);
                         fingerBigrams.add(fingerBigram);
@@ -286,7 +288,7 @@ public class KeyboardAnalysis {
         for (FingerBigram fingerBigram : fingerBigrams) {
             int finger1 = fingerBigram.getKey1().getFinger();
             int finger2 = fingerBigram.getKey2().getFinger();
-            int outermostFinger = FingerConfig.getOutermostFinger(finger1, finger2);
+            int outermostFinger = KeyboardConfig.getOutermostFinger(finger1, finger2);
             int diffrows = Math.min(2, Math.abs(fingerBigram.getKey1().getRow() - fingerBigram.getKey2().getRow()));
             double penalty = keyboardLayout.getPenaltyNeighbourFinger(outermostFinger, diffrows);
             bigramEffort[outermostFinger] += fingerBigram.getBigramFreq().getFreq() * penalty;

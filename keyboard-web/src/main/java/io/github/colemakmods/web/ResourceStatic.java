@@ -7,17 +7,37 @@ package io.github.colemakmods.web;
 public class ResourceStatic {
 
     public final static Resource[] ALL_LAYOUTS = {
-        new Resource("Mod-DH", "", "layout/colemak_dh.keyb"),
-        new Resource("Colemak", "", "layout/colemak.keyb"),
-        new Resource("Dvorak", "", "layout/dvorak.keyb"),
-        new Resource("Workman", "", "layout/workman.keyb"),
-        new Resource("MTGAP", "", "layout/mtgap.keyb"),
-        new Resource("qgmlwyfub", "", "layout/qgmlwyfub.keyb"),
-        new Resource("Asset", "", "layout/asset.keyb"),
-        new Resource("Norman", "", "layout/norman.keyb"),
-        new Resource("Qwpr", "", "layout/qwpr.keyb"),
-        new Resource("Minimak-8", "", "layout/minimak8.keyb"),
-        new Resource("Qwerty", "", "layout/qwerty.keyb"),
+        new Resource("> Main Keys", "", ""),
+        new Resource("Mod-DH", "", "layout_main/colemak_dh.keyb"),
+        new Resource("Colemak", "", "layout_main/colemak.keyb"),
+        new Resource("Dvorak", "", "layout_main/dvorak.keyb"),
+        new Resource("Workman", "", "layout_main/workman.keyb"),
+        new Resource("MTGAP", "", "layout_main/mtgap.keyb"),
+        new Resource("qgmlwyfub", "", "layout_main/qgmlwyfub.keyb"),
+        new Resource("Asset", "", "layout_main/asset.keyb"),
+        new Resource("Norman", "", "layout_main/norman.keyb"),
+        new Resource("Qwpr", "", "layout_main/qwpr.keyb"),
+        new Resource("Minimak-8", "", "layout_main/minimak8.keyb"),
+        new Resource("Qwerty", "", "layout_main/qwerty.keyb"),
+        new Resource("", "", ""),
+
+        new Resource("> Full Keyboard", "", ""),
+        new Resource("Mod-DH", "", "layout_full/colemak_dh.keyb"),
+        new Resource("Colemak", "", "layout_full/colemak.keyb"),
+        new Resource("Dvorak", "", "layout_full/dvorak.keyb"),
+        new Resource("Workman", "", "layout_full/workman.keyb"),
+        new Resource("MTGAP", "", "layout_full/mtgap.keyb"),
+        new Resource("qgmlwyfub", "", "layout_full/qgmlwyfub.keyb"),
+        new Resource("Asset", "", "layout_full/asset.keyb"),
+        new Resource("Norman", "", "layout_full/norman.keyb"),
+        new Resource("Qwpr", "", "layout_full/qwpr.keyb"),
+        new Resource("Minimak-8", "", "layout_full/minimak8.keyb"),
+        new Resource("Qwerty", "", "layout_full/qwerty.keyb"),
+        new Resource("", "", ""),
+
+    };
+
+    public final static Resource[] ALL_LAYOUTS_FULL = {
     };
 
     public final static Resource[] ALL_CONFIGS = {

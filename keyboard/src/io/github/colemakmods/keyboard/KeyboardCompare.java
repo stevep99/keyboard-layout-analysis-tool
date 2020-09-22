@@ -25,20 +25,20 @@ public class KeyboardCompare {
         }
 
         String keyboard1File = args[args.length - 2];
-        KeyboardLayout keyboardLayout1 = new KeyboardLayout();
-        boolean ok1 = keyboardLayout1.parse(new File(keyboard1File));
+        KeyboardLayout keyboardLayout1 = new KeyboardLayout(keyboard1File);
+        boolean ok1 = KeyboardMapping.parse(keyboardLayout1, new File(keyboard1File));
         if (!ok1) {
             return;
         }
-        keyboardLayout1.dump(System.out);
+        keyboardLayout1.dumpLayout(System.out);
 
         String keyboard2File = args[args.length - 1];
-        KeyboardLayout keyboardLayout2 = new KeyboardLayout();
-        boolean ok2 = keyboardLayout2.parse(new File(keyboard2File));
+        KeyboardLayout keyboardLayout2 = new KeyboardLayout(keyboard2File);
+        boolean ok2 = KeyboardMapping.parse(keyboardLayout2, new File(keyboard1File));
         if (!ok2) {
             return;
         }
-        keyboardLayout2.dump(System.out);
+        keyboardLayout2.dumpLayout(System.out);
 
         List<CharFreq> charFreqs = null;
         Properties posOverrides = null;

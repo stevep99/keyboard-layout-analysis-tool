@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.Exception;
@@ -18,11 +17,11 @@ import java.util.List;
  *
  * Created by steve on 20/10/14.
  */
-public class FingerConfig {
+public class KeyboardConfig {
 
     public enum Section {FINGERS, EFFORT, PENALTIES, TYPE}
 
-    public boolean parse(KeyboardLayout keyboardLayout, String data) {
+    public static boolean parse(KeyboardLayout keyboardLayout, String data) {
         try {
             return parse(keyboardLayout, new StringReader(data));
         } catch (IOException ex) {
@@ -32,7 +31,7 @@ public class FingerConfig {
         }
     }
 
-    public boolean parse(KeyboardLayout keyboardLayout, File file) {
+    public static boolean parse(KeyboardLayout keyboardLayout, File file) {
         try {
             return parse(keyboardLayout, new FileReader(file));
         } catch (IOException ex) {
@@ -42,8 +41,9 @@ public class FingerConfig {
         }
     }
 
-    private boolean parse(KeyboardLayout keyboardLayout, Reader reader) throws IOException {
+    private static boolean parse(KeyboardLayout keyboardLayout, Reader reader) throws IOException {
         Section section = Section.FINGERS;
+        int sectionRows = 3;
         BufferedReader br = new BufferedReader(reader);
         String line;
         try {
@@ -61,27 +61,38 @@ public class FingerConfig {
                     List<String> tokens = StringSplitter.split(line, ':');
                     try {
                         section = Section.valueOf(tokens.get(0).toUpperCase());
+                        if (tokens.size() > 1) {
+                            sectionRows = Integer.parseInt(tokens.get(1).trim());
+                        } else {
+                            sectionRows = 3;
+                        }
                         row = 0;
                     } catch (Exception e) {
                         System.err.println("Invalid section " + tokens.get(0));
                     }
                     continue;
                 }
-                if (section == Section.FINGERS) {
+                if (section == Section.EFFORT) {
                     List<String> tokens = StringSplitter.split(line, ' ');
-                    for (int col = 0; col < keyboardLayout.getCols(); col++) {
-                        Key key = keyboardLayout.lookupKey(row, col);
-                        if (key != null) {
-                            key.setFinger(Integer.parseInt(tokens.get(col)));
+                    for (int col = 0; col < tokens.size(); col++) {
+                        int keyboardRow = row + (keyboardLayout.getRows() - sectionRows);
+                        if (keyboardRow >= 0) {
+                            Key key = keyboardLayout.lookupKey(keyboardRow, col);
+                            if (key != null) {
+                                key.setEffort(Double.parseDouble(tokens.get(col)));
+                            }
                         }
                     }
                     ++row;
-                } else if (section == Section.EFFORT) {
+                } else if (section == Section.FINGERS) {
                     List<String> tokens = StringSplitter.split(line, ' ');
-                    for (int col = 0; col < keyboardLayout.getCols(); col++) {
-                        Key key = keyboardLayout.lookupKey(row, col);
-                        if (key != null) {
-                            key.setEffort(Double.parseDouble(tokens.get(col)));
+                    for (int col = 0; col < tokens.size(); col++) {
+                        int keyboardRow = row + (keyboardLayout.getRows() - sectionRows);
+                        if (keyboardRow >= 0) {
+                            Key key = keyboardLayout.lookupKey(keyboardRow, col);
+                            if (key != null) {
+                                key.setFinger(Integer.parseInt(tokens.get(col)));
+                            }
                         }
                     }
                     ++row;
@@ -105,7 +116,7 @@ public class FingerConfig {
                     try {
                         keyboardLayout.setKeyboardType(KeyboardLayout.KeyboardType.valueOf(tokens.get(0).toUpperCase()));
                     } catch (Exception ex) {
-                        System.err.println("Invalid KeyboardType " + tokens.get(0));
+                        throw new IOException("Invalid KeyboardType " + tokens.get(0));
                     }
                     ++row;
                 }
@@ -114,46 +125,6 @@ public class FingerConfig {
         } finally {
             br.close();
         }
-    }
-
-    public void dump(KeyboardLayout keyboardLayout, PrintStream out) {
-        out.println("Fingers");
-        for (int r = 0; r < keyboardLayout.getRows(); r++) {
-            for (int c = 0; c < keyboardLayout.getCols(); c++) {
-                Key key = keyboardLayout.lookupKey(r, c);
-                if (key != null) {
-                    out.print(key.getFinger() + " ");
-                } else {
-                    out.print("   ");
-                }
-            }
-            out.println();
-        }
-        out.println("Effort");
-        for (int r = 0; r < keyboardLayout.getRows(); r++) {
-            for (int c = 0; c < keyboardLayout.getCols(); c++) {
-                Key key = keyboardLayout.lookupKey(r, c);
-                if (key != null) {
-                    out.print(key.getEffort() + " ");
-                } else {
-                    out.print("   ");
-                }
-            }
-            out.println();
-        }
-        out.println("Same-Finger Penalties");
-        for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
-            out.print(keyboardLayout.getPenaltySameFinger(rowdiff) + " ");
-        }
-        out.println();
-        out.println("Neighbour-Finger Penalties");
-        for (int f = 0; f < 2; ++f) {
-            for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
-                out.print(keyboardLayout.getPenaltyNeighbourFinger(f, rowdiff)  + " ");
-            }
-            out.println();
-        }
-        out.println();
     }
 
     public static boolean isSameFinger(int f1, int f2) {

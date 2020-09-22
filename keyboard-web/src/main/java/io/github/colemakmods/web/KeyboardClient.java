@@ -3,8 +3,9 @@ package io.github.colemakmods.web;
 import io.github.colemakmods.chars.BigramFreq;
 import io.github.colemakmods.chars.CharFreq;
 import io.github.colemakmods.keyboard.KeyboardLayout;
+import io.github.colemakmods.keyboard.KeyboardMapping;
 import io.github.colemakmods.web.teavm.HTMLTextAreaElement;
-import io.github.colemakmods.keyboard.FingerConfig;
+import io.github.colemakmods.keyboard.KeyboardConfig;
 import io.github.colemakmods.keyboard.KeyboardAnalysis;
 import io.github.colemakmods.keyboard.KeyboardAnalysisReport;
 import io.github.colemakmods.keyboard.LayoutResults;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.24";
+    public static final String VERSION = "v1.25";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();
@@ -73,11 +74,12 @@ public class KeyboardClient {
         ResourceLoader.loadConfigResources();
 
         //layout selector
-        HTMLOptionElement layoutOptionCustom = (HTMLOptionElement) document.getElementById("layoutOptionCustom");
+        HTMLOptionElement layoutOptionCustom = (HTMLOptionElement) document.getElementById("layout-option-custom");
         layoutSelect.getOptions().remove(0);
         for (Resource keyboardResource : ResourceStatic.ALL_LAYOUTS) {
             HTMLOptionElement layoutOption = (HTMLOptionElement)layoutOptionCustom.cloneNode(true);
             layoutOption.setText(keyboardResource.getName());
+            layoutOption.setDisabled(keyboardResource.getPath().isEmpty());
             layoutSelect.getOptions().add(layoutOption);
         }
         layoutSelect.getOptions().add(layoutOptionCustom);
@@ -88,17 +90,19 @@ public class KeyboardClient {
                 if (selected < ResourceStatic.ALL_LAYOUTS.length) {
                     //update input layout unless "custom" is selected
                     Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[selected];
-                    setLayoutInput(keyboardResource.getText());
+                    if (! keyboardResource.getPath().isEmpty()) {
+                        setLayoutInput(keyboardResource.getText());
 
-                    refreshInputKeyboardPanel();
-                    setKeyboadHeatmapPanel(null);
-                    setOutput(null);
+                        refreshInputKeyboardPanel();
+                        setKeyboadHeatmapPanel(null);
+                        setOutput(null);
+                    }
                 }
             }
         });
 
         //config selector
-        HTMLOptionElement configOptionCustom = (HTMLOptionElement) document.getElementById("configOptionCustom");
+        HTMLOptionElement configOptionCustom = (HTMLOptionElement) document.getElementById("config-option-custom");
         configSelect.getOptions().remove(0);
         for (Resource configResource : ResourceStatic.ALL_CONFIGS) {
             HTMLOptionElement configOption = (HTMLOptionElement)configOptionCustom.cloneNode(true);
@@ -161,10 +165,9 @@ public class KeyboardClient {
     }
 
     private static void refreshInputKeyboardPanel() {
-        KeyboardLayout keyboardLayout = new KeyboardLayout();
-        keyboardLayout.parse(layoutInput.getValue(), "");
-        FingerConfig fingerConfig = new FingerConfig();
-        fingerConfig.parse(keyboardLayout, configInput.getValue());
+        KeyboardLayout keyboardLayout = new KeyboardLayout(layoutSelect.getValue());
+        KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
+        KeyboardConfig.parse(keyboardLayout, configInput.getValue());
         HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout, null);
 
         if (keyboardPanelFingers.getFirstChild() != null) {
@@ -185,12 +188,12 @@ public class KeyboardClient {
         readyState = state;
         if (readyState) {
             //set Mod-DH as the default layout
-            layoutSelect.setSelectedIndex(0);
-            Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[0];
+            layoutSelect.setSelectedIndex(1);
+            Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[layoutSelect.getSelectedIndex()];
             setLayoutInput(keyboardResource.getText());
             //select Ergonomic as default config
             configSelect.setSelectedIndex(2);
-            Resource configResource = ResourceStatic.ALL_CONFIGS[2];
+            Resource configResource = ResourceStatic.ALL_CONFIGS[configSelect.getSelectedIndex()];
             setConfigInput(configResource.getText());
 
             refreshInputKeyboardPanel();
@@ -198,21 +201,25 @@ public class KeyboardClient {
     }
 
     private static void performAnalyze() {
-        KeyboardLayout keyboardLayout = new KeyboardLayout();
-        keyboardLayout.parse(layoutInput.getValue(), "");
+        KeyboardLayout keyboardLayout = new KeyboardLayout(layoutSelect.getValue());
+        KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
+        KeyboardConfig.parse(keyboardLayout, configInput.getValue());
 
-        FingerConfig fingerConfig = new FingerConfig();
-        fingerConfig.parse(keyboardLayout, configInput.getValue());
+        if (keyboardLayout == null || !keyboardLayout.validate()) {
+            setOutput("\n[ An error occurred. Layout not correctly configured ]\n");
+            return;
+        }
 
         if (selectedFreqResource == null || selectedFreqResource.getText().length() == 0) {
             setOutput("\n[ An error occurred. Frequency data was missing. ]\n");
             return;
         }
 
+//        keyboardLayout.dumpLayout(System.out);
+//        keyboardLayout.dumpConfig(System.out);
+
         List<CharFreq> charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
         List<BigramFreq> bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
-
-        //layout.dump(System.out);
 
         KeyboardAnalysis ka = new KeyboardAnalysis();
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);

@@ -33,14 +33,6 @@ public class FingerBigram {
         return bigramFreq;
     }
 
-    public boolean isSameFinger() {
-        return FingerConfig.isSameFinger(key1.getFinger(), key2.getFinger());
-    }
-
-    public boolean isNeighbourFinger() {
-        return FingerConfig.isNeighbourFinger(key1.getFinger(), key2.getFinger());
-    }
-
     /**
      *  Get same-bigram frequencies per finger
      */
@@ -49,7 +41,7 @@ public class FingerBigram {
         for (FingerBigram fingerBigram : sameFingerBigrams) {
             int finger1 = fingerBigram.getKey1().getFinger();
             int finger2 = fingerBigram.getKey2().getFinger();
-            if (FingerConfig.isSameFinger(finger1, finger2)) {
+            if (KeyboardConfig.isSameFinger(finger1, finger2)) {
                 fingerBigramFreq[finger1] += fingerBigram.getBigramFreq().getFreq();
             }
         }

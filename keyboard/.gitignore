@@ -1,7 +1,10 @@
 build
 .gradle
 .idea
-output
-resources/config2
-resources/layout2
+output*
+out
+*_stp.sh
+resources/config_stp
+resources/config_3rows/
+resources/layout_experiment/
 local.properties

@@ -24,9 +24,11 @@ public class ResourceLoader {
 
     public static void loadKeyboardResources() {
         for (Resource keyboardResource : ResourceStatic.ALL_LAYOUTS) {
-            keyboardResource.setActive(true);
-            ResourceLoader rl = new ResourceLoader(keyboardResource);
-            rl.loadFile();
+            if (! keyboardResource.getPath().isEmpty()) {
+                keyboardResource.setActive(true);
+                ResourceLoader rl = new ResourceLoader(keyboardResource);
+                rl.loadFile();
+            }
         }
     }
 

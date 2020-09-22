@@ -1,14 +1,6 @@
 package io.github.colemakmods.keyboard;
 
-import io.github.colemakmods.chars.StringSplitter;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,72 +16,34 @@ public class KeyboardLayout {
     }
 
     private String name;
-    private List<Key> keyList = new ArrayList<Key>();
+    private List<Key> keyList = new ArrayList<>();
     private int cols;
     private int rows;
     private double[] penaltySameFinger = new double[3];
     private double[][] penaltyNeighbourFinger = new double[4][3];
     private KeyboardType keyboardType = KeyboardType.STD;
 
-    public boolean parse(File file) {
-        try {
-            this.name = file.getName();
-            parse(new FileReader(file));
-            return validate();
-        } catch (Exception ex) {
-            System.err.println("Unable to load layout file");
-            ex.printStackTrace();
-            return false;
+    public KeyboardLayout(String name) {
+        this.name = name;
+    }
+
+    public void addKey(int row, int col, String chars) {
+        Key key = new Key(row, col, chars);
+        keyList.add(key);
+        if (cols < key.getCol() + 1) {
+            this.cols = key.getCol() + 1;
+        }
+        if (rows < key.getRow() + 1) {
+            this.rows = key.getRow() + 1;
         }
     }
 
-    public boolean parse(String input, String name) {
-        try {
-            this.name = name;
-            parse(new StringReader(input));
-            return validate();
-        } catch (Exception ex) {
-            System.err.println("Unable to read layout data");
-            ex.printStackTrace();
-            return false;
-        }
-    }
-
-    private void parse(Reader in) throws IOException {
-        BufferedReader br = new BufferedReader(in);
-        try {
-            String line;
-            int row = 0;
-            while ((line = br.readLine()) != null) {
-                int commentpos = line.indexOf('#');
-                if (commentpos >= 0) {
-                    line = line.substring(0, commentpos);
-                }
-                line = line.trim();
-                if (line.length() == 0) {
-                    continue;
-                }
-                List<String> chars = StringSplitter.split(line, ' ');
-                for (int col = 0; col < chars.size(); col++) {
-                    Key key = new Key(chars.get(col), row, col);
-                    keyList.add(key);
-                }
-                if (chars.size() > cols) {
-                    cols = chars.size();
-                }
-                ++row;
-                if (row > rows) {
-                    rows = row;
-                }
-            }
-        } finally {
-            br.close();
-        }
-    }
-
-    private boolean validate() {
+    public boolean validate() {
         //check for duplicate characters
         for (int i=0; i < keyList.size(); ++i) {
+            if (keyList.get(i).getChars() == null) {
+                return false;
+            }
             for (int j=0; j < keyList.size(); ++j) {
                 if (i != j) {
                     if (keyList.get(j).hasChar(keyList.get(i).getName())) {
@@ -174,9 +128,9 @@ public class KeyboardLayout {
         this.keyboardType = keyboardType;
     }
 
-    public void dump(PrintStream out) {
+    public void dumpLayout(PrintStream out) {
         out.println();
-        out.println("Keyboard with " + keyList.size() + " keys:");
+        out.println("Keyboard '" + name + "' with " + keyList.size() + " keys in " + rows + " rows:");
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Key key = lookupKey(r, c);
@@ -188,6 +142,47 @@ public class KeyboardLayout {
             }
             out.println();
         }
-        //out.println("Alphabet " + getAlphabet() + "\n");
+        out.println("Alphabet " + getAlphabet());
+        out.println();
+    }
+
+    public void dumpConfig(PrintStream out) {
+        out.println("Effort");
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Key key = lookupKey(r, c);
+                if (key != null) {
+                    out.print(key.getEffort() + " ");
+                } else {
+                    out.print("   ");
+                }
+            }
+            out.println();
+        }
+        out.println("Fingers");
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Key key = lookupKey(r, c);
+                if (key != null) {
+                    out.print(key.getFinger() + " ");
+                } else {
+                    out.print("   ");
+                }
+            }
+            out.println();
+        }
+        out.println("Same-Finger Penalties");
+        for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
+            out.print(getPenaltySameFinger(rowdiff) + " ");
+        }
+        out.println();
+        out.println("Neighbour-Finger Penalties");
+        for (int f = 0; f < 2; ++f) {
+            for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
+                out.print(getPenaltyNeighbourFinger(f, rowdiff)  + " ");
+            }
+            out.println();
+        }
+        out.println();
     }
 }
