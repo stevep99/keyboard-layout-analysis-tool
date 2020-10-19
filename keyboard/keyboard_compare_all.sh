@@ -4,7 +4,7 @@ DIR=`pwd`
 
 FREQ_FILE="$DIR/resources/freq/en_books.freq"
 
-cd resources/layout
+cd resources/layout_main
 for i in $( ls *.keyb ); do
   echo Comparing keyboard $i with Qwerty
 
