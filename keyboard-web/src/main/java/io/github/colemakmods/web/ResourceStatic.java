@@ -39,9 +39,6 @@ public class ResourceStatic {
 
     };
 
-    public final static Resource[] ALL_LAYOUTS_FULL = {
-    };
-
     public final static Resource[] ALL_CONFIGS = {
         new Resource("Traditional", "The traditional typing method", "config/effort_traditional_config.dat"),
         new Resource("Alternative", "An alternative typing method", "config/effort_alternative_config.dat"),
@@ -57,6 +54,7 @@ public class ResourceStatic {
         new Resource("da", "Danish data", "freq/practical_cryptography/da_pc.freq"),
         new Resource("de", "German data", "freq/practical_cryptography/de_pc.freq"),
         new Resource("es", "Spanish data", "freq/practical_cryptography/es_pc.freq"),
+        new Resource("fi", "Finnish data", "freq/practical_cryptography/fi_pc.freq"),
         new Resource("fr", "French data", "freq/practical_cryptography/fr_pc.freq"),
         new Resource("pl", "Polish data", "freq/practical_cryptography/pl_pc.freq"),
         new Resource("sv", "Swedish data", "freq/practical_cryptography/sv_pc.freq")
