@@ -24,17 +24,17 @@ public class KeyboardCompare {
             return;
         }
 
-        String keyboard1File = args[args.length - 2];
-        KeyboardLayout keyboardLayout1 = new KeyboardLayout(keyboard1File);
-        boolean ok1 = KeyboardMapping.parse(keyboardLayout1, new File(keyboard1File));
+        String keyboard1Filename = args[args.length - 2];
+        KeyboardLayout keyboardLayout1 = new KeyboardLayout(keyboard1Filename);
+        boolean ok1 = KeyboardMapping.parse(keyboardLayout1, new File(keyboard1Filename));
         if (!ok1) {
             return;
         }
         keyboardLayout1.dumpLayout(System.out);
 
-        String keyboard2File = args[args.length - 1];
-        KeyboardLayout keyboardLayout2 = new KeyboardLayout(keyboard2File);
-        boolean ok2 = KeyboardMapping.parse(keyboardLayout2, new File(keyboard1File));
+        String keyboard2Filename = args[args.length - 1];
+        KeyboardLayout keyboardLayout2 = new KeyboardLayout(keyboard2Filename);
+        boolean ok2 = KeyboardMapping.parse(keyboardLayout2, new File(keyboard2Filename));
         if (!ok2) {
             return;
         }
@@ -81,7 +81,7 @@ public class KeyboardCompare {
         int[] count = new int[6];
 
         out.println();
-        for (char ch : keyboardLayout1.getAlphabet().toCharArray()) {
+        for (char ch : keyboardLayout1.getPrimaryChars().toUpperCase().toCharArray()) {
             Key key1 = keyboardLayout1.lookupKey(ch);
             Key key2 = keyboardLayout2.lookupKey(ch);
 
@@ -124,9 +124,11 @@ public class KeyboardCompare {
         }
 
         out.println();
-        out.printf("*: %f %f %f\n", totalPosDiff, totalFreq, totalScore);
+        out.printf("*: %f  %f  %f\n", totalPosDiff, totalFreq, totalScore);
 
         out.println();
+        int totalMoved = count[1] + count[2] + count[3] + count[4];
+        out.printf("Keys moved : %d\n\n", totalMoved);
         out.printf("SH / SF : %d\n", count[0]);
         out.printf("SH / SF : %d\n", count[1]);
         out.printf("SH / DF : %d\n", count[2]);

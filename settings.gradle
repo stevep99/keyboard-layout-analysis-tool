@@ -1,1 +1,1 @@
-include 'keyboard', 'keyboard-web'
+include 'analyzer', 'analyzer-web'

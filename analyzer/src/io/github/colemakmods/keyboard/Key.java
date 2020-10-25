@@ -54,6 +54,10 @@ public class Key {
         return chars;
     }
 
+    public char getPrimaryChar() {
+        return chars.charAt(0);
+    }
+
     public boolean hasChar(char ch) {
         for (char c : chars.toCharArray()) {
             if (c == Character.toUpperCase(ch)) return true;

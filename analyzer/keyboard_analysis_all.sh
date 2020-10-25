@@ -15,9 +15,9 @@ cd resources/layout_main
 
 for i in $( ls *.keyb ); do
   echo Analysing keyboard $i
-  if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak2.keyb" ]; then
+  if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak_dhk.keyb" ] || [ "$i" = "colemak2.keyb" ]; then
     CONFIG=$CONFIG_ERGO
-  elif [ "$i" = "colemak_dhm.keyb" ] || [ "$i" = "workman.keyb" ]; then
+  elif [ "$i" = "colemak_dh2.keyb" ] || [ "$i" = "workman.keyb" ]; then
     CONFIG=$CONFIG_MATRIX
   elif [ "$i" = "niro.keyb" ] || [ "$i" = "soul.keyb" ]; then
     CONFIG=$CONFIG_ALT

@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-  implementation project(":keyboard")
+  implementation project(":analyzer")
   compileOnly ("org.teavm:teavm-classlib:${teavm_version}")
   compileOnly ("org.teavm:teavm-jso:${teavm_version}")
   compileOnly ("org.teavm:teavm-jso-apis:${teavm_version}")

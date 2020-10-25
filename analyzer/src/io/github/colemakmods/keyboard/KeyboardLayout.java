@@ -81,6 +81,14 @@ public class KeyboardLayout {
         return sb.toString();
     }
 
+    public String getPrimaryChars() {
+        StringBuilder sb = new StringBuilder();
+        for (Key key : keyList) {
+            sb.append(key.getPrimaryChar());
+        }
+        return sb.toString();
+    }
+
     public String getName() {
         return name;
     }

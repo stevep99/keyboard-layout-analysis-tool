@@ -9,7 +9,7 @@ public class ResourceStatic {
     public final static Resource[] ALL_LAYOUTS = {
         new Resource("> Main Keys", "", ""),
         new Resource("Colemak-DH", "", "layout_main/colemak_dh.keyb"),
-        new Resource("Colemak-DHm", "", "layout_main/colemak_dhm.keyb"),
+        new Resource("Colemak-DHk", "", "layout_main/colemak_dhk.keyb"),
         new Resource("Colemak", "", "layout_main/colemak.keyb"),
         new Resource("Dvorak", "", "layout_main/dvorak.keyb"),
         new Resource("Workman", "", "layout_main/workman.keyb"),
@@ -24,7 +24,7 @@ public class ResourceStatic {
 
         new Resource("> Full Keyboard", "", ""),
         new Resource("Colemak-DH", "", "layout_full/colemak_dh.keyb"),
-        new Resource("Colemak-DHm", "", "layout_full/colemak_dhm.keyb"),
+        new Resource("Colemak-DHk", "", "layout_full/colemak_dhk.keyb"),
         new Resource("Colemak", "", "layout_full/colemak.keyb"),
         new Resource("Dvorak", "", "layout_full/dvorak.keyb"),
         new Resource("Workman", "", "layout_full/workman.keyb"),

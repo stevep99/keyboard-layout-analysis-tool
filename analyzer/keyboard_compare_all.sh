@@ -8,7 +8,7 @@ cd resources/layout_main
 for i in $( ls *.keyb ); do
   echo Comparing keyboard $i with Qwerty
 
-  if [ "$i" = "colemak_dh.keyb" ]; then
+  if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak_dhk.keyb" ] ; then
     POS_OVERRIDE_ARG="-p $DIR/resources/config/pos_override_colemak_dh.dat"
   else
     POS_OVERRIDE_ARG=""
