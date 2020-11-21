@@ -6,14 +6,14 @@ package io.github.colemakmods.web;
 public class Resource {
 
     private String name;
-    private String title;
+    private String info;
     private String path;
     private String text;
     private boolean active;
 
-    public Resource(String name, String title, String path) {
+    public Resource(String name, String info, String path) {
         this.name = name;
-        this.title = title;
+        this.info = info;
         this.path = path;
     }
 
@@ -21,8 +21,8 @@ public class Resource {
         return name;
     }
 
-    public String getTitle() {
-        return title;
+    public String getInfo() {
+        return info;
     }
 
     public String getPath() {

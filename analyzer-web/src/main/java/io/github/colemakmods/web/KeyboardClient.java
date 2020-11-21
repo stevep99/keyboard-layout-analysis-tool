@@ -22,7 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.26";
+    public static final String VERSION = "v1.27";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
 
     private static Window window = Window.current();
@@ -92,6 +92,7 @@ public class KeyboardClient {
                     Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[selected];
                     if (! keyboardResource.getPath().isEmpty()) {
                         setLayoutInput(keyboardResource.getText());
+                        selectConfigOption(keyboardResource.getInfo());
 
                         refreshInputKeyboardPanel();
                         setKeyboadHeatmapPanel(null);
@@ -107,7 +108,7 @@ public class KeyboardClient {
         for (Resource configResource : ResourceStatic.ALL_CONFIGS) {
             HTMLOptionElement configOption = (HTMLOptionElement)configOptionCustom.cloneNode(true);
             configOption.setText(configResource.getName());
-            configOption.setTitle(configResource.getTitle());
+            configOption.setTitle(configResource.getInfo());
             configSelect.getOptions().add(configOption);
         }
         configSelect.getOptions().add(configOptionCustom);
@@ -162,6 +163,17 @@ public class KeyboardClient {
                 }
             }
         });
+    }
+
+    private static void selectConfigOption(String configName) {
+        for (int i=0; i<configSelect.getOptions().getLength(); ++i) {
+            if (configName.equals(configSelect.getOptions().item(i).getText())) {
+                configSelect.setSelectedIndex(i);
+                Resource configResource = ResourceStatic.ALL_CONFIGS[i];
+                setConfigInput(configResource.getText());
+                break;
+            }
+        }
     }
 
     private static void refreshInputKeyboardPanel() {
@@ -283,7 +295,7 @@ public class KeyboardClient {
             if (selectedFreqResource == null) {
                 freqMessage = "No frequency data found";
             } else {
-                freqMessage = "Using frequency information: " + selectedFreqResource.getTitle();
+                freqMessage = "Using frequency information: " + selectedFreqResource.getInfo();
             }
             outputPanel.setInnerHTML(freqMessage + "\n\nReady.");
         }
