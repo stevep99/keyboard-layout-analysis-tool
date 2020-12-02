@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class KeyboardAnalysis {
 
-    private final static String DEFAULT_OUTPUT_OPTIONS = "t";
-
     private static List<String> messages = new ArrayList<>();
 
     public static void main(String args[]) {
@@ -27,7 +25,7 @@ public class KeyboardAnalysis {
             return;
         }
 
-        String outputOptions = null;
+        Options options = new Options();
         List<CharFreq> charFreqs = null;
         List<BigramFreq> bigramFreqs = null;
 
@@ -64,8 +62,22 @@ public class KeyboardAnalysis {
                 charFreqs = fa.getCharFreqs();
                 bigramFreqs = fa.getBigramFreqs();
 
+            } else if (args[i].equals("-b")) {
+                try {
+                    String[] bigramsListSizes = args[++i].split(",");
+                    if (bigramsListSizes.length >= 1) {
+                        options.sfbListSize = Integer.parseInt(bigramsListSizes[0]);
+                    }
+                    if (bigramsListSizes.length >= 2) {
+                        options.nfbListSize = Integer.parseInt(bigramsListSizes[1]);
+                    }
+                } catch (NumberFormatException ex) {
+                    System.err.println("Invalid argument: bigram list size (-b)");
+                    return;
+                }
+
             } else if (args[i].startsWith("-o")) {
-                outputOptions = args[++i];
+                options.outputFormat = args[++i];
             }
         }
 
@@ -81,18 +93,14 @@ public class KeyboardAnalysis {
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
 
         try {
-            //use default outputOptions if none supplied
-            if (outputOptions == null) {
-                outputOptions = DEFAULT_OUTPUT_OPTIONS;
-            }
             //generate full text report
-            if (outputOptions.indexOf('t') >= 0) {
-                KeyboardAnalysisTextReport kr = new KeyboardAnalysisTextReport(10, 5);
+            if (options.outputFormat.indexOf('t') >= 0) {
+                KeyboardAnalysisTextReport kr = new KeyboardAnalysisTextReport(options.sfbListSize, options.nfbListSize);
                 String output = kr.generate(layoutResults);
                 System.out.println(output);
             }
             //generate brief report for html table
-            if (outputOptions.indexOf('b') >= 0) {
+            if (options.outputFormat.indexOf('b') >= 0) {
                 KeyboardAnalysisBriefHTMLReport kr = new KeyboardAnalysisBriefHTMLReport();
                 String output = kr.generate(layoutResults);
                 System.out.println(output);

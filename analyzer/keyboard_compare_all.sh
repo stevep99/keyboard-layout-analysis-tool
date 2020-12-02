@@ -14,5 +14,5 @@ for i in $( ls *.keyb ); do
     POS_OVERRIDE_ARG=""
   fi
 
-  java -cp "$DIR/build/libs/keyboard-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardCompare -f $FREQ_FILE $POS_OVERRIDE_ARG qwerty.keyb $i > $DIR/output/compare_$i.out
+  java -cp "$DIR/build/libs/analyzer-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardCompare -f $FREQ_FILE $POS_OVERRIDE_ARG qwerty.keyb $i > $DIR/output/compare_$i.out
 done

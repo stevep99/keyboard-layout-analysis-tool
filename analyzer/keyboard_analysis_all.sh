@@ -25,5 +25,5 @@ for i in $( ls *.keyb ); do
     CONFIG=$CONFIG_TRAD
   fi
 
-  java -cp "$DIR/build/libs/keyboard-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c $CONFIG -f $FREQ -o $OUTPUT_OPTS $i > $DIR/output/analysis_$i.out
+  java -cp "$DIR/build/libs/analyzer-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c $CONFIG -f $FREQ -b 200,5 -o $OUTPUT_OPTS $i > $DIR/output/analysis_$i.out
 done

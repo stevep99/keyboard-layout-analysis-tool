@@ -24,6 +24,7 @@ import java.io.IOException;
 public class KeyboardClient {
     public static final String VERSION = "v1.27";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
+    private static final int DEFAULT_BIGRAM_LIST_SIZE = 5;
 
     private static Window window = Window.current();
     private static HTMLDocument document = HTMLDocument.current();
@@ -40,8 +41,10 @@ public class KeyboardClient {
     private static HTMLElement keyboardPanelFingers = document.getElementById("keyboard-panel-fingers");
     private static HTMLElement keyboardPanelHeatmap = document.getElementById("keyboard-panel-heatmap");
     private static HTMLElement outputPanel = document.getElementById("output-panel");
+
     private static boolean readyState = false;
     private static Resource selectedFreqResource;
+    private static int bigramListSize = DEFAULT_BIGRAM_LIST_SIZE;
 
     public static void main(String[] args) {
         //System.out.println("KeyboardClient start");
@@ -61,6 +64,10 @@ public class KeyboardClient {
                 String[] nameVal = queryArg.split("=");
                 if ("freq".equals(nameVal[0])) {
                     freqResourceParam = nameVal[1];
+                } else if ("bigrams".equals(nameVal[0])) {
+                    try {
+                        bigramListSize = Integer.parseInt(nameVal[1]);
+                    } catch (NumberFormatException ex) {}
                 }
             }
         }
@@ -240,7 +247,7 @@ public class KeyboardClient {
         setKeyboadHeatmapPanel(keyboardRenderer.generate(document, true));
 
         try {
-            KeyboardAnalysisReport report = new KeyboardAnalysisWebHTMLReport(5);
+            KeyboardAnalysisReport report = new KeyboardAnalysisWebHTMLReport(bigramListSize);
 
             String output = report.generate(layoutResults);
             setOutput(output);
