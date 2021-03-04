@@ -126,15 +126,24 @@ public class KeyboardAnalysis {
 
         //find difficult bigrams for the current layout
         List<FingerBigram> sameFingerBigrams = findSameFingerBigrams(keyboardLayout, bigramFreqs);
-        List<FingerBigram> neighbourFingerBigrams = findNeighbourFingerBigrams(keyboardLayout, bigramFreqs);
+        List<FingerBigram> neighbourPenaltyFingerBigrams = findNeighbourFingerBigrams(keyboardLayout, bigramFreqs, false);
+        List<FingerBigram> neighbourBenefitFingerBigrams = findNeighbourFingerBigrams(keyboardLayout, bigramFreqs, true);
 
         double[][] fingerEffort = new double[3][];
         fingerEffort[0] = calculateBaseEffort(keyboardLayout, charFreqs);
         fingerEffort[1] = calculateSameFingerBigramEffort(keyboardLayout, sameFingerBigrams);
-        fingerEffort[2] = calculateNeighbourFingerBigramEffort(keyboardLayout, neighbourFingerBigrams);
+        fingerEffort[2] = calculateNeighbourFingerBigramEffort(keyboardLayout,
+                joinList(neighbourPenaltyFingerBigrams, neighbourBenefitFingerBigrams));
 
         return new LayoutResults(keyboardLayout, messages, keyFreq, fingerFreq, handAlternation,
-            sameFingerBigrams, neighbourFingerBigrams, fingerEffort);
+            sameFingerBigrams, neighbourPenaltyFingerBigrams, neighbourBenefitFingerBigrams, fingerEffort);
+    }
+
+    private List<FingerBigram> joinList(List<FingerBigram> list1, List<FingerBigram> list2) {
+        List<FingerBigram> list = new ArrayList<>();
+        list.addAll(list1);
+        list.addAll(list2);
+        return list;
     }
 
     private List<String> sanityCheck(KeyboardLayout keyboardLayout) {
@@ -235,9 +244,10 @@ public class KeyboardAnalysis {
      *
      * @param keyboardLayout the current keyboard layout
      * @param bigramFreqs the full set of bigram frequencies
+     * @param benefit whether to get beneficial or detrimental bigrams
      * @return the list of neighbour-finger bigrams found
      */
-    private List<FingerBigram> findNeighbourFingerBigrams(KeyboardLayout keyboardLayout, List<BigramFreq> bigramFreqs) {
+    private List<FingerBigram> findNeighbourFingerBigrams(KeyboardLayout keyboardLayout, List<BigramFreq> bigramFreqs, boolean benefit) {
         List<FingerBigram> fingerBigrams = new ArrayList<FingerBigram>();
 
         for (BigramFreq bigramFreq : bigramFreqs) {
@@ -247,8 +257,8 @@ public class KeyboardAnalysis {
             if (key1 != null && key2 != null) {
                 if (KeyboardConfig.isNeighbourFinger(key1.getFinger(), key2.getFinger())) {
                     int outermostFinger = KeyboardConfig.getOutermostFinger(key1.getFinger(), key2.getFinger());
-                    if (keyboardLayout.hasPenaltyNeighbourFinger(outermostFinger)) {
-                        FingerBigram fingerBigram = new FingerBigram(key1, key2, bigramFreq);
+                    FingerBigram fingerBigram = new FingerBigram(key1, key2, bigramFreq);
+                    if (keyboardLayout.hasPenaltyNeighbourFinger(outermostFinger) != benefit) {
                         fingerBigrams.add(fingerBigram);
                     }
                 }

@@ -1,5 +1,5 @@
 
-# Keyboard Layout Analyzer
+# Keyboard Layout Analysis Tool
 
 This project provides tools for analyzing the efficiency and ease-of-use of alternative keyboard layouts. The analysis is done according to a set of criteria including (i) the relationship between the position of each key and the frequency with which it is typed, and (ii) the frequency of awkward combinations of keys, most notably same-finger bigrams.
 

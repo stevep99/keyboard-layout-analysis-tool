@@ -128,7 +128,7 @@ public class HTMLKeyboardRenderer {
                 return STD_KEY_WIDTH;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX) {
-            if (col == 0 || col == 5) {
+            if (col == 0 || col == 5 || col == 10) {
                 return STD_KEY_WIDTH/2;
             }
         }

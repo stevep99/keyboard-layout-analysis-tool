@@ -143,7 +143,7 @@ public class KeyboardLayout {
             for (int c = 0; c < cols; c++) {
                 Key key = lookupKey(r, c);
                 if (key != null) {
-                    out.print(key.getName() + " ");
+                    out.printf("  %s  ", key.getName());
                 } else {
                     out.print("   ");
                 }
@@ -160,9 +160,9 @@ public class KeyboardLayout {
             for (int c = 0; c < cols; c++) {
                 Key key = lookupKey(r, c);
                 if (key != null) {
-                    out.print(key.getEffort() + " ");
+                    out.printf(" % .1f ", key.getEffort());
                 } else {
-                    out.print("   ");
+                    out.print("     ");
                 }
             }
             out.println();
@@ -172,7 +172,7 @@ public class KeyboardLayout {
             for (int c = 0; c < cols; c++) {
                 Key key = lookupKey(r, c);
                 if (key != null) {
-                    out.print(key.getFinger() + " ");
+                    out.printf(" %s ", key.getFinger());
                 } else {
                     out.print("   ");
                 }
@@ -181,13 +181,13 @@ public class KeyboardLayout {
         }
         out.println("Same-Finger Penalties");
         for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
-            out.print(getPenaltySameFinger(rowdiff) + " ");
+            out.printf(" % .1f ", getPenaltySameFinger(rowdiff));
         }
         out.println();
         out.println("Neighbour-Finger Penalties");
-        for (int f = 0; f < 2; ++f) {
+        for (int f = 0; f < 3; ++f) {
             for (int rowdiff = 0; rowdiff < 3; ++rowdiff) {
-                out.print(getPenaltyNeighbourFinger(f, rowdiff)  + " ");
+                out.printf(" % .1f ", getPenaltyNeighbourFinger(f, rowdiff));
             }
             out.println();
         }

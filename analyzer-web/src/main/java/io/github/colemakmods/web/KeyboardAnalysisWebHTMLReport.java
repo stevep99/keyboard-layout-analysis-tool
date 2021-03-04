@@ -36,7 +36,7 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         showSameFingerBigrams(layoutResults.getSameFingerBigrams(), maxFingerBigrams, out);
         out.print("</div>");
         out.print("<div style=\"display: table-cell;padding-left:2ex\">");
-        showNeighbourFingerBigrams(layoutResults.getNeighbourFingerBigrams(), maxFingerBigrams, out);
+        showNeighbourFingerBigrams(layoutResults.getNeighbourPenaltyFingerBigrams(), maxFingerBigrams, out);
         out.print("</div>");
         out.print("</div>");
         showFingerEffort(layoutResults.getFingerEffort(), out);

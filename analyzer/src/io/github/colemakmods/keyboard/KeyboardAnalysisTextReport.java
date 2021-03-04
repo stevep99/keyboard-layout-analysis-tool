@@ -32,7 +32,7 @@ public class KeyboardAnalysisTextReport implements KeyboardAnalysisReport {
         showBigramStats(layoutResults.getHandAlternation(), out);
         showFingerBigramFreq(layoutResults.getSameFingerBigrams(), out);
         showSameFingerBigrams(layoutResults.getSameFingerBigrams(), maxSameFingerBigrams, out);
-        showNeighbourFingerBigrams(layoutResults.getNeighbourFingerBigrams(), maxNeighbourFingerBigrams, out);
+        showNeighbourFingerBigrams(layoutResults.getNeighbourPenaltyFingerBigrams(), maxNeighbourFingerBigrams, out);
         //showFingerEffortSimple(layoutResults.getFingerEffort(), out);
         showFingerEffortDetailed(layoutResults.getFingerEffort(), out);
     }
@@ -135,19 +135,19 @@ public class KeyboardAnalysisTextReport implements KeyboardAnalysisReport {
     private void showFingerEffortDetailed(double[][] fingerEffort, PrintStream out) {
         out.println();
         out.println("== Finger Effort ==");
-        out.println("               base  s-bigram  n-bigram     total");
+        out.println("                base   s-bigram   n-bigram      total");
         double[] fingerEffortTotal = new double[3];
         for (int i = 0; i < 10; ++i) {
             double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
             if (fingerEffort[0][i] > 0) {
-                out.printf("finger %d:  %f  %f  %f  %f\n", i, fingerEffort[0][i], fingerEffort[1][i], fingerEffort[2][i], allEffort);
+                out.printf("finger %d:  % f  % f  % f  % f\n", i, fingerEffort[0][i], fingerEffort[1][i], fingerEffort[2][i], allEffort);
                 fingerEffortTotal[0] += fingerEffort[0][i];
                 fingerEffortTotal[1] += fingerEffort[1][i];
                 fingerEffortTotal[2] += fingerEffort[2][i];
             }
         }
         double allEffortTotal = fingerEffortTotal[0] + fingerEffortTotal[1] + fingerEffortTotal[2];
-        out.printf(" total *:  %f  %f  %f  %f\n", fingerEffortTotal[0], fingerEffortTotal[1], fingerEffortTotal[2], allEffortTotal);
+        out.printf(" total *:  % f  % f  % f  % f\n", fingerEffortTotal[0], fingerEffortTotal[1], fingerEffortTotal[2], allEffortTotal);
     }
 
 }

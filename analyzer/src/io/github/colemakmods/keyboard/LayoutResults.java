@@ -15,20 +15,23 @@ public class LayoutResults {
     private double[] fingerFreq;
     private double handAlternation;
     private List<FingerBigram> sameFingerBigrams;
-    private List<FingerBigram> neighbourFingerBigrams;
+    private List<FingerBigram> neighbourPenaltyFingerBigrams;
+    private List<FingerBigram> neighbourBenefitFingerBigrams;
     private double[][] fingerEffort;
 
     public LayoutResults(KeyboardLayout keyboardLayout, List<String> messages,
-                         HashMap<Key, Double> keyFreq, double[] fingerFreq, double handAlternation,
-                         List<FingerBigram> sameFingerBigrams, List<FingerBigram> neighbourFingerBigrams,
-                         double[][] fingerEffort) {
+            HashMap<Key, Double> keyFreq, double[] fingerFreq, double handAlternation,
+            List<FingerBigram> sameFingerBigrams,
+            List<FingerBigram> neighbourPenaltyFingerBigrams, List<FingerBigram> neighbourBenefitFingerBigrams,
+            double[][] fingerEffort) {
         this.keyboardLayout = keyboardLayout;
         this.messages = messages;
         this.keyFreq = keyFreq;
         this.fingerFreq = fingerFreq;
         this.handAlternation = handAlternation;
         this.sameFingerBigrams = sameFingerBigrams;
-        this.neighbourFingerBigrams = neighbourFingerBigrams;
+        this.neighbourPenaltyFingerBigrams = neighbourPenaltyFingerBigrams;
+        this.neighbourBenefitFingerBigrams = neighbourBenefitFingerBigrams;
         this.fingerEffort = fingerEffort;
     }
 
@@ -56,8 +59,12 @@ public class LayoutResults {
         return sameFingerBigrams;
     }
 
-    public List<FingerBigram> getNeighbourFingerBigrams() {
-        return neighbourFingerBigrams;
+    public List<FingerBigram> getNeighbourPenaltyFingerBigrams() {
+        return neighbourPenaltyFingerBigrams;
+    }
+
+    public List<FingerBigram> getNeighbourBenefitFingerBigrams() {
+        return neighbourBenefitFingerBigrams;
     }
 
     public double[][] getFingerEffort() {
