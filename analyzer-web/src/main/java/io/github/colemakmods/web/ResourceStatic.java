@@ -7,25 +7,6 @@ package io.github.colemakmods.web;
 public class ResourceStatic {
 
     public final static Resource[] ALL_LAYOUTS = {
-        new Resource("> Main Keys", "", ""),
-        new Resource("Colemak-DH", "Ergonomic", "layout_main/colemak_dh.keyb"),
-        new Resource("Colemak-DHk", "Ergonomic", "layout_main/colemak_dhk.keyb"),
-        new Resource("Colemak", "Traditional", "layout_main/colemak.keyb"),
-        new Resource("Dvorak", "Traditional", "layout_main/dvorak.keyb"),
-        new Resource("Workman", "Traditional", "layout_main/workman.keyb"),
-        new Resource("MTGAP", "Traditional", "layout_main/mtgap.keyb"),
-        new Resource("qgmlwyfub", "Traditional", "layout_main/qgmlwyfub.keyb"),
-        new Resource("Halmak", "Traditional", "layout_main/halmak.keyb"),
-        new Resource("Soul", "Alternative", "layout_main/soul.keyb"),
-        new Resource("Niro", "Alternative", "layout_main/niro.keyb"),
-        new Resource("Asset", "Traditional", "layout_main/asset.keyb"),
-        new Resource("Norman", "Traditional", "layout_main/norman.keyb"),
-        new Resource("Qwpr", "Traditional", "layout_main/qwpr.keyb"),
-        new Resource("Minimak-8", "Traditional", "layout_main/minimak8.keyb"),
-        new Resource("Qwerty", "Traditional", "layout_main/qwerty.keyb"),
-        new Resource("", "", ""),
-
-        new Resource("> Full Keyboard", "", ""),
         new Resource("Colemak-DH", "Ergonomic", "layout_full/colemak_dh.keyb"),
         new Resource("Colemak-DHk", "Ergonomic", "layout_full/colemak_dhk.keyb"),
         new Resource("Colemak", "Traditional", "layout_full/colemak.keyb"),
@@ -41,8 +22,6 @@ public class ResourceStatic {
         new Resource("Qwpr", "Traditional", "layout_full/qwpr.keyb"),
         new Resource("Minimak-8", "Traditional", "layout_full/minimak8.keyb"),
         new Resource("Qwerty", "Traditional", "layout_full/qwerty.keyb"),
-        new Resource("", "", ""),
-
     };
 
     public final static Resource[] ALL_CONFIGS = {
