@@ -5,6 +5,8 @@ package io.github.colemakmods.web;
  */
 public class Resource {
 
+    private final static String BUILDSTR = "?20210306";
+
     private String name;
     private String info;
     private String path;
@@ -14,7 +16,7 @@ public class Resource {
     public Resource(String name, String info, String path) {
         this.name = name;
         this.info = info;
-        this.path = path;
+        this.path = path + BUILDSTR;
     }
 
     public String getName() {

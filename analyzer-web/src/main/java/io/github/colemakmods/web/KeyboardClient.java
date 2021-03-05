@@ -207,7 +207,7 @@ public class KeyboardClient {
         readyState = state;
         if (readyState) {
             //set Mod-DH as the default layout
-            layoutSelect.setSelectedIndex(1);
+            layoutSelect.setSelectedIndex(0);
             Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[layoutSelect.getSelectedIndex()];
             setLayoutInput(keyboardResource.getText());
             //select Ergonomic as default config
@@ -224,7 +224,7 @@ public class KeyboardClient {
         KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
         KeyboardConfig.parse(keyboardLayout, configInput.getValue());
 
-        if (keyboardLayout == null || !keyboardLayout.validate()) {
+        if (!keyboardLayout.validate()) {
             setOutput("\n[ An error occurred. Layout not correctly configured ]\n");
             return;
         }

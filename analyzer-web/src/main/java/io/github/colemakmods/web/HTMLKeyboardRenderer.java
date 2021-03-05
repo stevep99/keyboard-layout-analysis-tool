@@ -15,7 +15,7 @@ public class HTMLKeyboardRenderer {
     private KeyboardLayout keyboardLayout;
     private HashMap<Key, Double> keyFreq;
 
-    private final static int STD_KEY_WIDTH = 30; //standard key width in pixels
+    private final static int STD_KEY_WIDTH = 36; //standard key width in pixels
 
     private static final String[] KEY_COLOR_FINGERS = {
             "#80c4c4",
@@ -37,21 +37,13 @@ public class HTMLKeyboardRenderer {
 
     public HTMLElement generate(Document document, boolean isHeatmap) {
         HTMLElement divElt = (HTMLElement) document.createElement("div");
+        divElt.setAttribute("style", "position:relative;");
         for (int row = 0; row < keyboardLayout.getRows(); ++row) {
             for (int col = 0; col < keyboardLayout.getCols(); ++col) {
-                int rowid = 5 - keyboardLayout.getRows() + row;
-                int gap = determineGap(rowid, col);
-                if (gap > 0) {
-                    HTMLElement keyGapSpanElt = generateKeyGapElt(document, gap);
-                    divElt.appendChild(keyGapSpanElt);
-                }
                 Key key = keyboardLayout.lookupKey(row, col);
                 if (key != null) {
                     HTMLElement keySpanElt = generateKeyElt(document, key, isHeatmap);
                     divElt.appendChild(keySpanElt);
-                } else {
-                    HTMLElement keyGapSpanElt = generateKeyGapElt(document, STD_KEY_WIDTH);
-                    divElt.appendChild(keyGapSpanElt);
                 }
             }
             HTMLElement brElt = (HTMLElement) document.createElement("br");
@@ -76,19 +68,26 @@ public class HTMLKeyboardRenderer {
             backgroundColor = KEY_COLOR_FINGERS[key.getFinger()];
         }
 
+        //calculate key position
+        int rowid = 5 - keyboardLayout.getRows() + key.getRow();
+        Position pos = determinePosition(rowid, key.getCol(), keyboardLayout.getRows());
+        StringBuffer styleAttr = new StringBuffer("position:absolute;");
+        styleAttr.append("left:" + pos.x + "px;top:" + pos.y + "px;");
         if (backgroundColor != null) {
-            spanElt.setAttribute("style", "background-color:" + backgroundColor);
+            styleAttr.append("background-color:" + backgroundColor + ";");
         } else {
             spanElt.setHidden(true);
         }
+        spanElt.setAttribute("style", styleAttr.toString());
+
         if (isHeatmap) {
             Double keyFreqValue = keyFreq.get(key);
             if (keyFreqValue != null) {
-                spanElt.setAttribute("title", "Key " + new String(key.getChars()) + " Usage: "
+                spanElt.setAttribute("title", "Key " + key.getChars() + " Usage: "
                         + JSFormatter.toFixed(keyFreqValue * 100, 2) + "%");
             }
         } else {
-            spanElt.setAttribute("title", "Key " + new String(key.getChars()) + "  Effort: "
+            spanElt.setAttribute("title", "Key " + key.getChars() + "  Effort: "
                 + JSFormatter.toFixed(key.getEffort(), 1));
 
         }
@@ -96,44 +95,56 @@ public class HTMLKeyboardRenderer {
         return spanElt;
     }
 
-    private HTMLElement generateKeyGapElt(Document document, int gap) {
-        HTMLElement spanElt = (HTMLElement) document.createElement("span");
-        spanElt.setAttribute("class", "keygap");
-        spanElt.setAttribute("style", "width:" + gap + "px");
-        return spanElt;
-    }
-
-    private int determineGap(int rowid, int col) {
+    private Position determinePosition(int rowid, int col, int rowCount) {
         KeyboardLayout.KeyboardType type = keyboardLayout.getKeyboardType();
+        int x = col * 36 + 10;
+        int y = (rowCount > 3) ? rowid * 28 - 24 : rowid * 28 - 36;
         if (type == KeyboardLayout.KeyboardType.STD) {
-            if (rowid == 1 && col == 0) {
-                return 0;
-            } else if (rowid == 2 && col == 0) {
-                return STD_KEY_WIDTH / 2;
-            } else if (rowid == 3 && col == 0) {
-                return STD_KEY_WIDTH * 3/4;
-            } else if (rowid == 4 && col == 0) {
-                return STD_KEY_WIDTH * 5/4;
+            if (rowid == 1) {
+                //
+            } else if (rowid == 2) {
+                x += STD_KEY_WIDTH / 2;
+            } else if (rowid == 3) {
+                x += STD_KEY_WIDTH * 3/4;
+            } else if (rowid == 4) {
+                x += STD_KEY_WIDTH * 5/4;
             }
         } else if (type == KeyboardLayout.KeyboardType.ANGLE) {
-            if (rowid == 1 && col == 0) {
-                return 0;
-            } else if (rowid == 2 && col == 0) {
-                return STD_KEY_WIDTH / 2;
-            } else if (rowid == 3 && col == 0) {
-                return STD_KEY_WIDTH * 3/4;
-            } else if (rowid == 4 && col == 0) {
-                return STD_KEY_WIDTH * 1/4;
-            } else if (rowid == 4 && col == 5) {
-                return STD_KEY_WIDTH;
+            if (rowid == 1) {
+                //
+            } else if (rowid == 2) {
+                x += STD_KEY_WIDTH / 2;
+            } else if (rowid == 3) {
+                x += STD_KEY_WIDTH * 3/4;
+            } else if (rowid == 4) {
+                x += (col < 5) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX) {
-            if (col == 0 || col == 5 || col == 10) {
-                return STD_KEY_WIDTH/2;
+            if (rowid == 1 || rowid == 2) {
+                if (col >= 5 && col < 10) {
+                    x += STD_KEY_WIDTH * 5 / 2;
+                } else if (col == 10) {
+                    x -= STD_KEY_WIDTH * 5;
+                } else if (col == 11) {
+                    x -= STD_KEY_WIDTH * 9 / 2;
+                }
+            } else {
+                if (col >= 5) {
+                    x += STD_KEY_WIDTH * 5 / 2;
+                }
             }
         }
-        return 0;
+        return new Position(x, y);
     }
 
+    class Position {
+        int x;
+        int y;
+
+        Position(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
 }
