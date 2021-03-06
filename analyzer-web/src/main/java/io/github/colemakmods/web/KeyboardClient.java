@@ -22,7 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.27";
+    public static final String VERSION = "v1.30";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
     private static final int DEFAULT_BIGRAM_LIST_SIZE = 5;
 
