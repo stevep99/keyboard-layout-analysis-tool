@@ -15,7 +15,9 @@ public class HTMLKeyboardRenderer {
     private KeyboardLayout keyboardLayout;
     private HashMap<Key, Double> keyFreq;
 
-    private final static int STD_KEY_WIDTH = 36; //standard key width in pixels
+    //standard key width and height in pixels
+    private final static int STD_KEY_WIDTH = 36;
+    private final static int STD_KEY_HEIGHT = 28;
 
     private static final String[] KEY_COLOR_FINGERS = {
             "#80c4c4",
@@ -97,8 +99,8 @@ public class HTMLKeyboardRenderer {
 
     private Position determinePosition(int rowid, int col, int rowCount) {
         KeyboardLayout.KeyboardType type = keyboardLayout.getKeyboardType();
-        int x = col * 36 + 10;
-        int y = (rowCount > 3) ? rowid * 28 - 24 : rowid * 28 - 36;
+        int x = col * STD_KEY_WIDTH + 10;
+        int y = (rowCount > 3) ? rowid * STD_KEY_HEIGHT - 24 : rowid * STD_KEY_HEIGHT - 36;
         if (type == KeyboardLayout.KeyboardType.STD) {
             if (rowid == 1) {
                 //
@@ -120,7 +122,15 @@ public class HTMLKeyboardRenderer {
                 x += (col < 5) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX) {
-            if (rowid == 1 || rowid == 2) {
+            if (rowid == 1) {
+                if (col >= 5) {
+                    x += STD_KEY_WIDTH * 5 / 2;
+                    if (col == 11) {
+                        x -= STD_KEY_WIDTH;
+                        y += STD_KEY_HEIGHT;
+                    }
+                }
+            } else if (rowid == 2) {
                 if (col >= 5 && col < 10) {
                     x += STD_KEY_WIDTH * 5 / 2;
                 } else if (col == 10) {
