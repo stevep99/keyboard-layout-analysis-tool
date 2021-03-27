@@ -24,21 +24,27 @@ public class KeyboardCompare {
             return;
         }
 
-        String keyboard1Filename = args[args.length - 2];
+        String keyboard1Filename = args[args.length - 4];
         KeyboardLayout keyboardLayout1 = new KeyboardLayout(keyboard1Filename);
         boolean ok1 = KeyboardMapping.parse(keyboardLayout1, new File(keyboard1Filename));
         if (!ok1) {
             return;
         }
+        String config1Filename = args[args.length - 3];
+        KeyboardConfig.parse(keyboardLayout1, new File(config1Filename));
         keyboardLayout1.dumpLayout(System.out);
+        keyboardLayout1.dumpConfig(System.out);
 
-        String keyboard2Filename = args[args.length - 1];
+        String keyboard2Filename = args[args.length - 2];
         KeyboardLayout keyboardLayout2 = new KeyboardLayout(keyboard2Filename);
         boolean ok2 = KeyboardMapping.parse(keyboardLayout2, new File(keyboard2Filename));
         if (!ok2) {
             return;
         }
+        String config2Filename = args[args.length - 1];
+        KeyboardConfig.parse(keyboardLayout2, new File(config2Filename));
         keyboardLayout2.dumpLayout(System.out);
+        keyboardLayout2.dumpConfig(System.out);
 
         List<CharFreq> charFreqs = null;
         Properties posOverrides = null;
@@ -68,7 +74,7 @@ public class KeyboardCompare {
     }
 
     private static void exitHelp() {
-        System.out.println("KeyboardCompare  -f frequencyFile  [-p positionOverrideFile]  keyboard1File  keyboard2File");
+        System.out.println("KeyboardCompare  -f frequencyFile  [-p positionOverrideFile]  keyboard1File  config1File  keyboard2File  config2File");
         System.exit(0);
     }
 
@@ -104,7 +110,7 @@ public class KeyboardCompare {
                     posdiff = 0.75;
                     count[3]++;
                 } else {
-                    posdiff = 1;
+                    posdiff = 1.0;
                     count[4]++;
                 }
             } else {
@@ -113,11 +119,16 @@ public class KeyboardCompare {
             }
             totalPosDiff += posdiff;
 
+            double effortRatio = 1.0;
+            if (key1 != null && key2 != null) {
+                effortRatio = key2.getEffort() / key1.getEffort();
+            }
+
             CharFreq cf = CharFreq.findByChar(ch, charFreqs);
             if (cf != null) {
                 double freqCost = experienceCurve.getIntegratedCost(100*cf.getFreq());
-                double score = posdiff * freqCost;
-                out.printf("%s:  %f  %f  %f  %f\n", ch, posdiff, cf.getFreq(), freqCost, score);
+                double score = posdiff * freqCost * effortRatio;
+                out.printf("%s:  %f  %f  %f  %f  %f\n", ch, posdiff, cf.getFreq(), freqCost, effortRatio, score);
                 totalFreq += cf.getFreq();
                 totalScore += score;
             }
@@ -128,12 +139,12 @@ public class KeyboardCompare {
 
         out.println();
         int totalMoved = count[1] + count[2] + count[3] + count[4];
-        out.printf("Keys moved : %d\n\n", totalMoved);
-        out.printf("SH / SF : %d\n", count[0]);
-        out.printf("SH / SF : %d\n", count[1]);
-        out.printf("SH / DF : %d\n", count[2]);
-        out.printf("DH / SF : %d\n", count[3]);
-        out.printf("DH / DF : %d\n", count[4]);
+        out.printf("Keys moved : %d\n", totalMoved);
+        out.printf("  Unchanged: %d\n\n", count[0]);
+        out.printf(" SH / SF : %d\n", count[1]);
+        out.printf(" SH / DF : %d\n", count[2]);
+        out.printf(" DH / SF : %d\n", count[3]);
+        out.printf(" DH / DF : %d\n", count[4]);
         if (posOverrides != null) {
             out.printf("Override: %d\n", count[5]);
         }

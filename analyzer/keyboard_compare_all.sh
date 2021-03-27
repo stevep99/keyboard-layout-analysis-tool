@@ -2,17 +2,29 @@
 
 DIR=`pwd`
 
-FREQ_FILE="$DIR/resources/freq/en_books.freq"
+CONFIG_ERGO="$DIR/resources/config/effort_ergonomic_config.dat"
+CONFIG_ALT="$DIR/resources/config/effort_alternative_config.dat"
+CONFIG_TRAD="$DIR/resources/config/effort_traditional_config.dat"
+CONFIG_MATRIX="$DIR/resources/config/effort_matrix_config.dat"
 
-cd resources/layout_main
+FREQ_ARG="-f $DIR/resources/freq/en_books.freq"
+
+cd resources/layout_full
+
 for i in $( ls *.keyb ); do
-  echo Comparing keyboard $i with Qwerty
 
   if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak_dhk.keyb" ] ; then
     POS_OVERRIDE_ARG="-p $DIR/resources/config/pos_override_colemak_dh.dat"
+    CONFIG=$CONFIG_ERGO
   else
-    POS_OVERRIDE_ARG=""
+    POS_OVERRIDE_ARG="" 
+    CONFIG=$CONFIG_TRAD
   fi
+  
+  echo "Comparing keyboard $i with Qwerty"
 
-  java -cp "$DIR/build/libs/analyzer-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardCompare -f $FREQ_FILE $POS_OVERRIDE_ARG qwerty.keyb $i > $DIR/output/compare_$i.out
+  java -cp "$DIR/build/libs/analyzer-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardCompare \
+	  $FREQ_ARG $POS_OVERRIDE_ARG \
+	  qwerty.keyb $CONFIG_TRAD \
+	  $i $CONFIG > $DIR/output/compare_$i.out
 done
