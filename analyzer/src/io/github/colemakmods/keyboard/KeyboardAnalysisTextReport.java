@@ -115,13 +115,13 @@ public class KeyboardAnalysisTextReport implements KeyboardAnalysisReport {
     private void showFingerEffortSimple(double[][] fingerEffort, PrintStream out) {
         out.println();
         out.println("== Finger Effort ==");
-        out.println("               base   bigrams     total");
+        out.println("              base  bigrams    total");
         double[] fingerEffortTotal = new double[3];
         for (int i = 0; i < 10; ++i) {
             double bigramEffort = fingerEffort[1][i] + fingerEffort[2][i];
             double allEffort = fingerEffort[0][i] + bigramEffort;
             if (fingerEffort[0][i] > 0) {
-                out.printf("finger %d:  %f  %f  %f\n", i, fingerEffort[0][i], bigramEffort, allEffort);
+                out.printf("finger %d:   % .3f   % .3f   % .3f\n", i, fingerEffort[0][i], bigramEffort, allEffort);
                 fingerEffortTotal[0] += fingerEffort[0][i];
                 fingerEffortTotal[1] += fingerEffort[1][i];
                 fingerEffortTotal[2] += fingerEffort[2][i];
@@ -129,25 +129,25 @@ public class KeyboardAnalysisTextReport implements KeyboardAnalysisReport {
         }
         double bigramEffortTotal = fingerEffortTotal[1] + fingerEffortTotal[2];
         double allEffortTotal = fingerEffortTotal[0] + bigramEffortTotal;
-        out.printf(" total *:  %f  %f  %f\n", fingerEffortTotal[0], bigramEffortTotal, allEffortTotal);
+        out.printf(" total *:   % .3f   % .3f   % .3f\n", fingerEffortTotal[0], bigramEffortTotal, allEffortTotal);
     }
 
     private void showFingerEffortDetailed(double[][] fingerEffort, PrintStream out) {
         out.println();
         out.println("== Finger Effort ==");
-        out.println("                base   s-bigram   n-bigram      total");
+        out.println("              base s-bigram n-bigram    total");
         double[] fingerEffortTotal = new double[3];
         for (int i = 0; i < 10; ++i) {
             double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
             if (fingerEffort[0][i] > 0) {
-                out.printf("finger %d:  % f  % f  % f  % f\n", i, fingerEffort[0][i], fingerEffort[1][i], fingerEffort[2][i], allEffort);
+                out.printf("finger %d:   % .3f   % .3f   % .3f   % .3f\n", i, fingerEffort[0][i], fingerEffort[1][i], fingerEffort[2][i], allEffort);
                 fingerEffortTotal[0] += fingerEffort[0][i];
                 fingerEffortTotal[1] += fingerEffort[1][i];
                 fingerEffortTotal[2] += fingerEffort[2][i];
             }
         }
         double allEffortTotal = fingerEffortTotal[0] + fingerEffortTotal[1] + fingerEffortTotal[2];
-        out.printf(" total *:  % f  % f  % f  % f\n", fingerEffortTotal[0], fingerEffortTotal[1], fingerEffortTotal[2], allEffortTotal);
+        out.printf(" total *:   % .3f   % .3f   % .3f   % .3f\n", fingerEffortTotal[0], fingerEffortTotal[1], fingerEffortTotal[2], allEffortTotal);
     }
 
 }

@@ -147,10 +147,16 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
             double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
             if (fingerEffort[0][i] > 0) {
                 out.println("<tr>");
-                out.println("<td>finger " + i + " </td><td>" + format(fingerEffort[0][i], 5) + "</td><td>"
-                    + format(fingerEffort[1][i],5) + "</td><td>"
-                    + format(fingerEffort[2][i],5) + "</td><td>"
-                    + format(allEffort,5) + "</td>");
+
+                out.println("<td>finger "
+                    + i + " </td><td>"
+                    + format(fingerEffort[0][i], 3)
+                    + "</td><td>"
+                    + format(fingerEffort[1][i],3)
+                    + "</td><td>"
+                    + ((i <= 2 || i >= 7) ? format(fingerEffort[2][i],3) : "")
+                    + "</td><td>"
+                    + format(allEffort,3) + "</td>");
                 out.println("</tr>");
                 fingerEffortTotal[0] += fingerEffort[0][i];
                 fingerEffortTotal[1] += fingerEffort[1][i];
@@ -160,10 +166,10 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
         double bigramEffortTotal = fingerEffortTotal[1] + fingerEffortTotal[2];
         double allEffortTotal = fingerEffortTotal[0] + bigramEffortTotal;
         out.println("<tr class=\"row_total\">");
-        out.println("<td>total * </td><td>" + format(fingerEffortTotal[0], 5) + "</td><td> "
-            + format(fingerEffortTotal[1], 5) + "</td><td> "
-            + format(fingerEffortTotal[2], 5) + "</td><td> "
-            + format(allEffortTotal,5) + "</td>");
+        out.println("<td>total * </td><td>" + format(fingerEffortTotal[0], 3) + "</td><td> "
+            + format(fingerEffortTotal[1], 3) + "</td><td> "
+            + format(fingerEffortTotal[2], 3) + "</td><td> "
+            + format(allEffortTotal,3) + "</td>");
         out.println("</tr>");
         out.println("</table>");
     }
