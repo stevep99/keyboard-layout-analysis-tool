@@ -22,7 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.30";
+    public static final String VERSION = "v1.31";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
     private static final int DEFAULT_BIGRAM_LIST_SIZE = 5;
 
@@ -224,8 +224,13 @@ public class KeyboardClient {
         KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
         KeyboardConfig.parse(keyboardLayout, configInput.getValue());
 
-        if (!keyboardLayout.validate()) {
-            setOutput("\n[ An error occurred. Layout not correctly configured ]\n");
+        List<String> messages = keyboardLayout.validate();
+        if (!messages.isEmpty()) {
+            StringBuffer sb = new StringBuffer("\n[A layout configuration error occurred]\n");
+            for (String message : messages) {
+                sb.append(message).append('\n');
+            }
+            setOutput(sb.toString());
             return;
         }
 

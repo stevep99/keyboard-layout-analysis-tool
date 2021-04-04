@@ -15,6 +15,8 @@ public class KeyboardLayout {
         STD, ANGLE, MATRIX
     }
 
+    public final static String ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     private String name;
     private List<Key> keyList = new ArrayList<>();
     private int cols;
@@ -38,21 +40,23 @@ public class KeyboardLayout {
         }
     }
 
-    public boolean validate() {
+    public List<String> validate() {
+        String alphabet = getAlphabet();
+        List <String> errors = new ArrayList<>();
         //check for duplicate characters
-        for (int i=0; i < keyList.size(); ++i) {
-            if (keyList.get(i).getChars() == null) {
-                return false;
+        for (char alpha : ALPHAS.toCharArray()) {
+            if (alphabet.indexOf(alpha) < 0) {
+                errors.add("• Symbol " + alpha + " has no mapping");
             }
-            for (int j=0; j < keyList.size(); ++j) {
-                if (i != j) {
-                    if (keyList.get(j).hasChar(keyList.get(i).getName())) {
-                        return false;
-                    }
+        }
+        for (int i=0; i < alphabet.length()-1; ++i) {
+            for (int j=i+1; j < alphabet.length(); ++j) {
+                if (alphabet.charAt(i) == alphabet.charAt(j)) {
+                    errors.add("• Symbol " + alphabet.charAt(i) + " has duplicate mapping");
                 }
             }
         }
-        return true;
+        return errors;
     }
 
     public Key lookupKey(char c) {

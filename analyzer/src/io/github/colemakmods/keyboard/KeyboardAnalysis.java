@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class KeyboardAnalysis {
 
-    private static List<String> messages = new ArrayList<>();
-
     public static void main(String args[]) {
         if (args.length < 3) {
             exitHelp();
@@ -36,6 +34,8 @@ public class KeyboardAnalysis {
         if (!valid) return;
         keyboardLayout.dumpLayout(System.out);
 
+        String alphabet = keyboardLayout.getAlphabet();
+
         for (int i=0; i<args.length-1; ++i) {
             if (args[i].equals("-c")) {
                 String[] configFiles = args[++i].split(",");
@@ -47,8 +47,8 @@ public class KeyboardAnalysis {
 
             } else if (args[i].equals("-f")) {
                 String frequencyFile = args[++i];
-                charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
-                bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), new File(frequencyFile));
+                charFreqs = CharFreq.initialize(alphabet, new File(frequencyFile));
+                bigramFreqs = BigramFreq.initialize(alphabet, new File(frequencyFile));
                 if (charFreqs == null || bigramFreqs == null) {
                     return;
                 }
@@ -56,7 +56,7 @@ public class KeyboardAnalysis {
             } else if (args[i].equals("-w")) {
                 String wordFile = args[++i];
 
-                FreqAnalysis fa = new FreqAnalysis(keyboardLayout.getAlphabet(), -1);
+                FreqAnalysis fa = new FreqAnalysis(alphabet, -1);
                 fa.analyze(new File(wordFile));
 
                 charFreqs = fa.getCharFreqs();
@@ -81,8 +81,13 @@ public class KeyboardAnalysis {
             }
         }
 
-        valid = keyboardLayout.validate();
-        if (!valid) return;
+        List<String> errors = keyboardLayout.validate();
+        if (!errors.isEmpty()) {
+            for (String error: errors) {
+                System.err.println("Error: " + error);
+            }
+            return;
+        }
 
         if (charFreqs == null || bigramFreqs == null) {
             exitHelp();
