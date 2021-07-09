@@ -72,7 +72,7 @@ public class HTMLKeyboardRenderer {
 
         //calculate key position
         int rowid = 5 - keyboardLayout.getRows() + key.getRow();
-        Position pos = determinePosition(rowid, key.getCol(), keyboardLayout.getRows());
+        Position pos = determinePosition(rowid, key.getCol(), keyboardLayout.getRows(), key.getHand());
         StringBuffer styleAttr = new StringBuffer("position:absolute;");
         styleAttr.append("left:" + pos.x + "px;top:" + pos.y + "px;");
         if (backgroundColor != null) {
@@ -97,7 +97,7 @@ public class HTMLKeyboardRenderer {
         return spanElt;
     }
 
-    private Position determinePosition(int rowid, int col, int rowCount) {
+    private Position determinePosition(int rowid, int col, int rowCount, int hand) {
         KeyboardLayout.KeyboardType type = keyboardLayout.getKeyboardType();
         int x = col * STD_KEY_WIDTH + 10;
         int y = (rowCount > 3) ? rowid * STD_KEY_HEIGHT - 24 : rowid * STD_KEY_HEIGHT - 36;
@@ -119,28 +119,23 @@ public class HTMLKeyboardRenderer {
             } else if (rowid == 3) {
                 x += STD_KEY_WIDTH * 3/4;
             } else if (rowid == 4) {
-                x += (col < 5) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
+                x += (hand == 0) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
             }
-        } else if (type == KeyboardLayout.KeyboardType.MATRIX) {
-            if (rowid == 1) {
-                if (col >= 5) {
-                    x += STD_KEY_WIDTH * 5 / 2;
-                    if (col == 11) {
-                        x -= STD_KEY_WIDTH;
-                        y += STD_KEY_HEIGHT;
-                    }
-                }
-            } else if (rowid == 2) {
-                if (col >= 5 && col < 10) {
-                    x += STD_KEY_WIDTH * 5 / 2;
-                } else if (col == 10) {
+        } else if (type == KeyboardLayout.KeyboardType.MATRIX_SIMPLE) {
+            if (hand > 0) {
+                x += STD_KEY_WIDTH / 2;
+            }
+        } else if (type == KeyboardLayout.KeyboardType.MATRIX_ERGODOX) {
+            if (hand > 0) {
+                x += STD_KEY_WIDTH * 5 / 2;
+            }
+            if (rowid == 1 || rowid == 2) {
+                if (col == 10) {
                     x -= STD_KEY_WIDTH * 5;
                 } else if (col == 11) {
-                    x -= STD_KEY_WIDTH * 9 / 2;
-                }
-            } else {
-                if (col >= 5) {
-                    x += STD_KEY_WIDTH * 5 / 2;
+                    x -= STD_KEY_WIDTH * 7;
+                } else if (col > 11) {
+                    x -= STD_KEY_WIDTH * 2;
                 }
             }
         }

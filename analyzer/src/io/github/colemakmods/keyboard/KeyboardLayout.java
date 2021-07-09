@@ -12,7 +12,7 @@ import java.util.List;
 public class KeyboardLayout {
 
     public enum KeyboardType {
-        STD, ANGLE, MATRIX
+        STD, ANGLE, MATRIX_SIMPLE, MATRIX_ERGODOX,
     }
 
     public final static String ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

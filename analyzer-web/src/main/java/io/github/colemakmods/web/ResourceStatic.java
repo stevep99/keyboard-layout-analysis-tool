@@ -28,7 +28,8 @@ public class ResourceStatic {
         new Resource("Traditional", "The traditional typing method", "config/effort_traditional_config.dat"),
         new Resource("Alternative", "An alternative typing method", "config/effort_alternative_config.dat"),
         new Resource("Ergonomic", "An ergonomic method using the Angle Mod", "config/effort_ergonomic_config.dat"),
-        new Resource("Matrix", "A Matrix or ortholinear colemakmods", "config/effort_matrix_config.dat")
+        new Resource("Matrix Simple", "A simple split matrix keyboard", "config/effort_matrix_simple_config.dat"),
+        new Resource("Matrix Ergodox", "A matrix-like keyboard similar to the Ergodox", "config/effort_matrix_ergodox_config.dat")
     };
 
     public final static Resource[] ALL_FREQS = {

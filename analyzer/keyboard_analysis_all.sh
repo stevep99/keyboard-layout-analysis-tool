@@ -5,7 +5,7 @@ DIR=`pwd`
 CONFIG_ERGO="$DIR/resources/config/effort_ergonomic_config.dat"
 CONFIG_ALT="$DIR/resources/config/effort_alternative_config.dat"
 CONFIG_TRAD="$DIR/resources/config/effort_traditional_config.dat"
-CONFIG_MATRIX="$DIR/resources/config/effort_matrix_config.dat"
+CONFIG_MATRIX="$DIR/resources/config/effort_matrix_simple_config.dat"
 
 FREQ="$DIR/resources/freq/en_books.freq"
 
