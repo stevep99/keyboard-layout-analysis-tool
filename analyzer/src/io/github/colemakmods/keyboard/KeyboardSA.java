@@ -38,7 +38,7 @@ public class KeyboardSA {
     boolean valid = KeyboardMapping.parse(keyboardLayout, keyboardFile);
     if (!valid)
       return;
-    keyboardLayout.dumpLayout(System.out);
+    // keyboardLayout.dumpLayout(System.out);
 
     String alphabet = keyboardLayout.getAlphabet();
 
@@ -50,7 +50,7 @@ public class KeyboardSA {
           if (!valid)
             return;
         }
-        keyboardLayout.dumpConfig(System.out);
+        // keyboardLayout.dumpConfig(System.out);
 
       } else if (args[i].equals("-f")) {
         String frequencyFile = args[++i];
@@ -107,8 +107,11 @@ public class KeyboardSA {
 
     KeyboardAnalysis ka = new KeyboardAnalysis();
     keyboardLayout = run_sa(keyboardLayout, charFreqs, bigramFreqs, options.highTemp, options.alpha);
-    keyboardLayout.dumpLayout(System.out);
     LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
+    if (layoutResults.getTotalFingerEffort() > 1.95 ||
+        layoutResults.getTotalSFBEffort() > 0.03)
+      return;
+    keyboardLayout.dumpLayout(System.out);
 
     try {
       // generate full text report
@@ -177,8 +180,6 @@ public class KeyboardSA {
       // if (Math.random() < 0.5) {
       key2_idx = (int) (neighbour.getKeyList().size() * Math.random());
       key2 = neighbour.getKeyList().get(key2_idx);
-      if (key2.getRow() == 0 || key2.getCol() > 9)
-        continue;
       // } else {
       // List<Key> keyNeighbours = new ArrayList<Key>();
       // for (int i = -1; i < 2; i++) {
@@ -196,6 +197,8 @@ public class KeyboardSA {
       // Random rand = new Random();
       // key2 = keyNeighbours.get(rand.nextInt(keyNeighbours.size()));
       // }
+      if (key2.getRow() == 0 || key2.getCol() > 9)
+        continue;
 
       Key key1_copy = new Key(key1.getRow(), key1.getCol(), key1.getChars());
 
@@ -232,7 +235,8 @@ public class KeyboardSA {
 
     }
 
-    System.out.println("Temp " + t + " costDelta " + costDelta + " stateDelta " + stateDelta);
+    // System.out.println("Temp " + t + " costDelta " + costDelta + " stateDelta " +
+    // stateDelta);
     return best;
 
   }
