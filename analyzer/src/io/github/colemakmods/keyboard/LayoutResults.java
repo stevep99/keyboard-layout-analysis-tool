@@ -71,5 +71,30 @@ public class LayoutResults {
         return fingerEffort;
     }
 
+    public double getTotalFingerEffort() {
+        double[] fingerEffortTotal = new double[3];
+        for (int i = 0; i < 10; ++i) {
+            double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
+            if (fingerEffort[0][i] > 0) {
+                fingerEffortTotal[0] += fingerEffort[0][i];
+                fingerEffortTotal[1] += fingerEffort[1][i];
+                fingerEffortTotal[2] += fingerEffort[2][i];
+            }
+        }
+        double allEffortTotal = fingerEffortTotal[0] + fingerEffortTotal[1] + fingerEffortTotal[2];
+        return allEffortTotal;
+    }
 
+    public double getTotalSFBEffort() {
+        double[] fingerEffortTotal = new double[3];
+        for (int i = 0; i < 10; ++i) {
+            double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
+            if (fingerEffort[0][i] > 0) {
+                fingerEffortTotal[0] += fingerEffort[0][i];
+                fingerEffortTotal[1] += fingerEffort[1][i];
+                fingerEffortTotal[2] += fingerEffort[2][i];
+            }
+        }
+        return fingerEffortTotal[1];
+    }
 }

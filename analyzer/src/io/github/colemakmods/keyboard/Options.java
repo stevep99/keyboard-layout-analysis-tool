@@ -9,4 +9,7 @@ public class Options {
     public int sfbListSize = DEFAULT_SFB_LIST_SIZE;
     public int nfbListSize = DEFAULT_NFB_LIST_SIZE;
 
+    public double highTemp = 128.0;
+    public double alpha = 8.0;
+
 }

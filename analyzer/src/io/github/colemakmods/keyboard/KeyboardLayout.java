@@ -2,6 +2,7 @@ package io.github.colemakmods.keyboard;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +30,32 @@ public class KeyboardLayout {
         this.name = name;
     }
 
+    public KeyboardLayout(String name, List<Key> keyList, int cols, int rows, double[] penaltySameFinger,
+            double[][] penaltyNeighbourFinger, KeyboardType keyboardType) {
+        this.name = name;
+        this.keyList = new ArrayList<Key>();
+        for (Key k : keyList) {
+            this.keyList.add(k.duplicate());
+        }
+        this.cols = cols;
+        this.rows = rows;
+        this.penaltySameFinger = Arrays.copyOf(penaltySameFinger, penaltySameFinger.length);
+        this.penaltyNeighbourFinger = new double[4][3];
+        for (int i = 0; i < penaltyNeighbourFinger.length; i++) {
+            this.penaltyNeighbourFinger[i] = Arrays.copyOf(penaltyNeighbourFinger[i], penaltyNeighbourFinger[i].length);
+        }
+        this.keyboardType = keyboardType;
+    }
+
+    public KeyboardLayout duplicate() {
+        return new KeyboardLayout(this.name, this.keyList, this.cols, this.rows, this.penaltySameFinger,
+                this.penaltyNeighbourFinger, this.keyboardType);
+    }
+
+    public List<Key> getKeyList() {
+        return keyList;
+    }
+
     public void addKey(int row, int col, String chars) {
         Key key = new Key(row, col, chars);
         keyList.add(key);
@@ -42,15 +69,15 @@ public class KeyboardLayout {
 
     public List<String> validate() {
         String alphabet = getAlphabet();
-        List <String> errors = new ArrayList<>();
-        //check for duplicate characters
+        List<String> errors = new ArrayList<>();
+        // check for duplicate characters
         for (char alpha : ALPHAS.toCharArray()) {
             if (alphabet.indexOf(alpha) < 0) {
                 errors.add("• Symbol " + alpha + " has no mapping");
             }
         }
-        for (int i=0; i < alphabet.length()-1; ++i) {
-            for (int j=i+1; j < alphabet.length(); ++j) {
+        for (int i = 0; i < alphabet.length() - 1; ++i) {
+            for (int j = i + 1; j < alphabet.length(); ++j) {
                 if (alphabet.charAt(i) == alphabet.charAt(j)) {
                     errors.add("• Symbol " + alphabet.charAt(i) + " has duplicate mapping");
                 }
@@ -115,7 +142,8 @@ public class KeyboardLayout {
 
     public double getPenaltyNeighbourFinger(int outermostFinger, int rowdiff) {
         int outermostFingerLeft = (outermostFinger <= 4) ? outermostFinger : 9 - outermostFinger;
-        if (penaltyNeighbourFinger.length <= outermostFingerLeft) return 0;
+        if (penaltyNeighbourFinger.length <= outermostFingerLeft)
+            return 0;
         return penaltyNeighbourFinger[outermostFingerLeft][rowdiff];
     }
 
@@ -125,9 +153,11 @@ public class KeyboardLayout {
 
     public boolean hasPenaltyNeighbourFinger(int outermostFinger) {
         int outermostFingerLeft = (outermostFinger <= 4) ? outermostFinger : 9 - outermostFinger;
-        if (penaltyNeighbourFinger.length <= outermostFingerLeft) return false;
+        if (penaltyNeighbourFinger.length <= outermostFingerLeft)
+            return false;
         for (int r = 0; r < 3; ++r) {
-            if (penaltyNeighbourFinger[outermostFingerLeft][r] > 0) return true;
+            if (penaltyNeighbourFinger[outermostFingerLeft][r] > 0)
+                return true;
         }
         return false;
     }
@@ -147,9 +177,9 @@ public class KeyboardLayout {
             for (int c = 0; c < cols; c++) {
                 Key key = lookupKey(r, c);
                 if (key != null) {
-                    out.printf("  %s  ", key.getName());
+                    out.printf("%s ", key.getName());
                 } else {
-                    out.print("   ");
+                    out.print(" ");
                 }
             }
             out.println();
