@@ -8,8 +8,4 @@ public class Options {
     public String outputFormat = DEFAULT_OUTPUT_FORMAT;
     public int sfbListSize = DEFAULT_SFB_LIST_SIZE;
     public int nfbListSize = DEFAULT_NFB_LIST_SIZE;
-
-    public double highTemp = 128.0;
-    public double alpha = 8.0;
-
 }

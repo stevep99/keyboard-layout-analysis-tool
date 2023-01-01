@@ -30,7 +30,7 @@ public class KeyboardLayout {
         this.name = name;
     }
 
-    public KeyboardLayout(String name, List<Key> keyList, int cols, int rows, double[] penaltySameFinger,
+    private KeyboardLayout(String name, List<Key> keyList, int cols, int rows, double[] penaltySameFinger,
             double[][] penaltyNeighbourFinger, KeyboardType keyboardType) {
         this.name = name;
         this.keyList = new ArrayList<Key>();
@@ -50,6 +50,11 @@ public class KeyboardLayout {
     public KeyboardLayout duplicate() {
         return new KeyboardLayout(this.name, this.keyList, this.cols, this.rows, this.penaltySameFinger,
                 this.penaltyNeighbourFinger, this.keyboardType);
+    }
+
+    public KeyboardLayout duplicateWithName(String nameName) {
+        return new KeyboardLayout(nameName, this.keyList, this.cols, this.rows, this.penaltySameFinger,
+            this.penaltyNeighbourFinger, this.keyboardType);
     }
 
     public List<Key> getKeyList() {
