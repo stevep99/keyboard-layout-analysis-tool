@@ -9,92 +9,92 @@ import java.util.List;
  * Created by steve on 12/01/18.
  */
 public class LayoutResults {
-  private KeyboardLayout keyboardLayout;
-  private List<String> messages;
-  private HashMap<Key, Double> keyFreq;
-  private double[] fingerFreq;
-  private double handAlternation;
-  private List<FingerBigram> sameFingerBigrams;
-  private List<FingerBigram> neighbourPenaltyFingerBigrams;
-  private List<FingerBigram> neighbourBenefitFingerBigrams;
-  private double[][] fingerEffort;
+    private KeyboardLayout keyboardLayout;
+    private List<String> messages;
+    private HashMap<Key, Double> keyFreq;
+    private double[] fingerFreq;
+    private double handAlternation;
+    private List<FingerBigram> sameFingerBigrams;
+    private List<FingerBigram> neighbourPenaltyFingerBigrams;
+    private List<FingerBigram> neighbourBenefitFingerBigrams;
+    private double[][] fingerEffort;
 
-  public LayoutResults(KeyboardLayout keyboardLayout, List<String> messages,
-      HashMap<Key, Double> keyFreq, double[] fingerFreq, double handAlternation,
-      List<FingerBigram> sameFingerBigrams,
-      List<FingerBigram> neighbourPenaltyFingerBigrams, List<FingerBigram> neighbourBenefitFingerBigrams,
-      double[][] fingerEffort) {
-    this.keyboardLayout = keyboardLayout;
-    this.messages = messages;
-    this.keyFreq = keyFreq;
-    this.fingerFreq = fingerFreq;
-    this.handAlternation = handAlternation;
-    this.sameFingerBigrams = sameFingerBigrams;
-    this.neighbourPenaltyFingerBigrams = neighbourPenaltyFingerBigrams;
-    this.neighbourBenefitFingerBigrams = neighbourBenefitFingerBigrams;
-    this.fingerEffort = fingerEffort;
-  }
-
-  public KeyboardLayout getLayout() {
-    return keyboardLayout;
-  }
-
-  public List<String> getMessages() {
-    return messages;
-  }
-
-  public HashMap<Key, Double> getKeyFreq() {
-    return keyFreq;
-  }
-
-  public double[] getFingerFreq() {
-    return fingerFreq;
-  }
-
-  public double getHandAlternation() {
-    return handAlternation;
-  }
-
-  public List<FingerBigram> getSameFingerBigrams() {
-    return sameFingerBigrams;
-  }
-
-  public List<FingerBigram> getNeighbourPenaltyFingerBigrams() {
-    return neighbourPenaltyFingerBigrams;
-  }
-
-  public List<FingerBigram> getNeighbourBenefitFingerBigrams() {
-    return neighbourBenefitFingerBigrams;
-  }
-
-  public double[][] getFingerEffort() {
-    return fingerEffort;
-  }
-
-  public double getTotalFingerEffort() {
-    double[] fingerEffortTotal = new double[3];
-    for (int i = 0; i < 10; ++i) {
-      double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
-      if (fingerEffort[0][i] > 0) {
-        fingerEffortTotal[0] += fingerEffort[0][i];
-        fingerEffortTotal[1] += fingerEffort[1][i];
-        fingerEffortTotal[2] += fingerEffort[2][i];
-      }
+    public LayoutResults(KeyboardLayout keyboardLayout, List<String> messages,
+            HashMap<Key, Double> keyFreq, double[] fingerFreq, double handAlternation,
+            List<FingerBigram> sameFingerBigrams,
+            List<FingerBigram> neighbourPenaltyFingerBigrams, List<FingerBigram> neighbourBenefitFingerBigrams,
+            double[][] fingerEffort) {
+        this.keyboardLayout = keyboardLayout;
+        this.messages = messages;
+        this.keyFreq = keyFreq;
+        this.fingerFreq = fingerFreq;
+        this.handAlternation = handAlternation;
+        this.sameFingerBigrams = sameFingerBigrams;
+        this.neighbourPenaltyFingerBigrams = neighbourPenaltyFingerBigrams;
+        this.neighbourBenefitFingerBigrams = neighbourBenefitFingerBigrams;
+        this.fingerEffort = fingerEffort;
     }
-    double allEffortTotal = fingerEffortTotal[0] + fingerEffortTotal[1] + fingerEffortTotal[2];
-    return allEffortTotal;
-  }
 
-  public double getTotalSFBEffort() {
-    double[] fingerEffortTotal = new double[3];
-    for (int i = 0; i < 10; ++i) {
-      double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
-      if (fingerEffort[0][i] > 0) {
-        fingerEffortTotal[0] += fingerEffort[0][i];
-        fingerEffortTotal[1] += fingerEffort[1][i];
-        fingerEffortTotal[2] += fingerEffort[2][i];
-      }
+    public KeyboardLayout getLayout() {
+        return keyboardLayout;
     }
-    return fingerEffortTotal[1];
-  }
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public HashMap<Key, Double> getKeyFreq() {
+        return keyFreq;
+    }
+
+    public double[] getFingerFreq() {
+        return fingerFreq;
+    }
+
+    public double getHandAlternation() {
+        return handAlternation;
+    }
+
+    public List<FingerBigram> getSameFingerBigrams() {
+        return sameFingerBigrams;
+    }
+
+    public List<FingerBigram> getNeighbourPenaltyFingerBigrams() {
+        return neighbourPenaltyFingerBigrams;
+    }
+
+    public List<FingerBigram> getNeighbourBenefitFingerBigrams() {
+        return neighbourBenefitFingerBigrams;
+    }
+
+    public double[][] getFingerEffort() {
+        return fingerEffort;
+    }
+
+    public double getTotalFingerEffort() {
+        double[] fingerEffortTotal = new double[3];
+        for (int i = 0; i < 10; ++i) {
+            double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
+            if (fingerEffort[0][i] > 0) {
+                fingerEffortTotal[0] += fingerEffort[0][i];
+                fingerEffortTotal[1] += fingerEffort[1][i];
+                fingerEffortTotal[2] += fingerEffort[2][i];
+            }
+        }
+        double allEffortTotal = fingerEffortTotal[0] + fingerEffortTotal[1] + fingerEffortTotal[2];
+        return allEffortTotal;
+    }
+
+    public double getTotalSFBEffort() {
+        double[] fingerEffortTotal = new double[3];
+        for (int i = 0; i < 10; ++i) {
+            double allEffort = fingerEffort[0][i] + fingerEffort[1][i] + fingerEffort[2][i];
+            if (fingerEffort[0][i] > 0) {
+                fingerEffortTotal[0] += fingerEffort[0][i];
+                fingerEffortTotal[1] += fingerEffort[1][i];
+                fingerEffortTotal[2] += fingerEffort[2][i];
+            }
+        }
+        return fingerEffortTotal[1];
+    }
 }
