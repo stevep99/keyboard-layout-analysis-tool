@@ -18,6 +18,13 @@ public class Key {
         this.finger = getDefaultFinger();
     }
 
+    public Key duplicate() {
+        Key k = new Key(this.row, this.col, this.chars);
+        k.setFinger(this.finger);
+        k.setEffort(this.effort);
+        return k;
+    }
+
     public char getName() {
         return Character.toUpperCase(chars.charAt(0));
     }
@@ -26,8 +33,16 @@ public class Key {
         return row;
     }
 
+    public void setRow(int row) {
+        this.row = row;
+    }
+
     public int getCol() {
         return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
     }
 
     public int getHand() {
@@ -60,7 +75,8 @@ public class Key {
 
     public boolean hasChar(char ch) {
         for (char c : chars.toCharArray()) {
-            if (c == Character.toUpperCase(ch)) return true;
+            if (c == Character.toUpperCase(ch))
+                return true;
         }
         return false;
     }
@@ -79,7 +95,7 @@ public class Key {
     }
 
     private int getDefaultFinger() {
-        //default finger values
+        // default finger values
         if (col <= 3) {
             return col;
         } else if (col == 4) {

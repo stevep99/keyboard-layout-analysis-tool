@@ -3,6 +3,10 @@ package io.github.colemakmods.keyboard;
 import io.github.colemakmods.chars.BigramFreq;
 import io.github.colemakmods.chars.CharFreq;
 import io.github.colemakmods.chars.FreqAnalysis;
+import io.github.colemakmods.sa.SASettings;
+import io.github.colemakmods.sa.SFBEffortModel;
+import io.github.colemakmods.sa.SimpleEffortModel;
+import io.github.colemakmods.sa.SimulatedAnnealing;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ public class KeyboardAnalysis {
         }
 
         Options options = new Options();
+        SASettings saSettings = null;
         List<CharFreq> charFreqs = null;
         List<BigramFreq> bigramFreqs = null;
 
@@ -78,12 +83,33 @@ public class KeyboardAnalysis {
 
             } else if (args[i].startsWith("-o")) {
                 options.outputFormat = args[++i];
+            } else if (args[i].startsWith("--sa")) {
+                String effortModelClass = args[++i];
+                switch (effortModelClass) {
+                    case "SimpleEffortModel":
+                        saSettings = new SASettings(new SimpleEffortModel());
+                        break;
+                    case "SFBEffortModel":
+                        saSettings = new SASettings(new SFBEffortModel());
+                        break;
+                    default:
+                        System.err.println("Invalid argument: unknown --sa parameter");
+                        return;
+                }
+            } else if (args[i].startsWith("-t")) {
+                if (saSettings != null) {
+                    saSettings.highTemp = Double.parseDouble(args[++i]);
+                }
+            } else if (args[i].startsWith("-a")) {
+                if (saSettings != null) {
+                    saSettings.alpha = Double.parseDouble(args[++i]);
+                }
             }
         }
 
         List<String> errors = keyboardLayout.validate();
         if (!errors.isEmpty()) {
-            for (String error: errors) {
+            for (String error : errors) {
                 System.err.println("Error: " + error);
             }
             return;
@@ -94,17 +120,21 @@ public class KeyboardAnalysis {
             return;
         }
 
+        if (saSettings != null) {
+            keyboardLayout = SimulatedAnnealing.runSimulation(keyboardLayout, charFreqs, bigramFreqs, saSettings);
+        }
+
         KeyboardAnalysis ka = new KeyboardAnalysis();
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);
 
         try {
-            //generate full text report
+            // generate full text report
             if (options.outputFormat.indexOf('t') >= 0) {
                 KeyboardAnalysisTextReport kr = new KeyboardAnalysisTextReport(options.sfbListSize, options.nfbListSize);
                 String output = kr.generate(layoutResults);
                 System.out.println(output);
             }
-            //generate brief report for html table
+            // generate brief report for html table
             if (options.outputFormat.indexOf('b') >= 0) {
                 KeyboardAnalysisBriefHTMLReport kr = new KeyboardAnalysisBriefHTMLReport();
                 String output = kr.generate(layoutResults);
@@ -118,6 +148,7 @@ public class KeyboardAnalysis {
     private static void exitHelp() {
         System.out.println("KeyboardAnalysis  -c configFiles..  -f frequencyFile  keyboardFile");
         System.out.println("KeyboardAnalysis  -c configFiles..  -w wordFile  keyboardFile");
+        System.out.println("KeyboardAnalysis  -c configFiles..  -w wordFile  --sa effortModel  keyboardStartingFile");
         System.exit(0);
     }
 
