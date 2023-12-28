@@ -23,7 +23,7 @@ for i in $( ls *.keyb ); do
   
   echo "Comparing keyboard $i with Qwerty"
 
-  java -cp "$DIR/build/libs/analyzer-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardCompare \
+  java -cp "$DIR/build/libs/analyzer.jar" io.github.colemakmods.keyboard.KeyboardCompare \
 	  $FREQ_ARG $POS_OVERRIDE_ARG \
 	  qwerty.keyb $CONFIG_TRAD \
 	  $i $CONFIG > $DIR/output/compare_$i.out

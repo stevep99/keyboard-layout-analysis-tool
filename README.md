@@ -31,7 +31,7 @@ The app is built using [gradle](https://gradle.org/).
 1. Ensure you have a recent JDK (recommended version 8+) installed.
 2. ```cd keyboard```
 3. ```../gradlew jar```
-4. If compiling was successful, you should have generated a file ```keyboard/build/libs/keyboard-1.0-SNAPSHOT.jar```.
+4. If compiling was successful, you should have generated a file ```keyboard/build/libs/analyzer.jar```.
 
 ### Running
 
@@ -59,9 +59,7 @@ The ```resources``` folder contains all the input files which are used by the an
 
 ## The "keyboard-web" Module
 
-This module generates the web interface for the tool, as shown at http://colemakmods.github.io/mod-dh/analyze.html
-
-You probably can ignore this module, it is simply for generating the layout analyzer's [web interface](http://colemakmods.github.io/mod-dh/analyze.html).
+You probably can ignore this module, it is only for generating the layout analyzer's [web interface](http://colemakmods.github.io/mod-dh/analyze.html).
 
 ### Compiling
 
@@ -71,7 +69,7 @@ The module is build using [gradle](https://gradle.org/), and uses [TeaVM](http:/
 2. Ensure you have maven installed.
 3. ```cd keyboard-web```
 4. copy the resource files ```./prepare-resources.sh```
-4. ```../gradlew teavm copyresources```
-5. If compiling was successful, you should have the generated web files in ```keyboard-web/build```
+4. ```../gradlew webapp```
+5. If compiling was successful, you should have the generated web files in ```keyboard-web/build/webapp```
 
 

@@ -1,42 +1,37 @@
-apply plugin: 'java'
-apply plugin: 'io.github.zebalu.teavm-gradle-plugin'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'io.github.zebalu:teavm-gradle-plugin:+'
-    }
+plugins {
+    id "java"
+    id "org.teavm" version "0.9.0"
 }
 
-def teavm_version = '0.6.1'
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 teavm {
-    mainClass = 'io.github.colemakmods.web.KeyboardClient'
-    sourceFilesCopied = false
-    sourceMapsGenerated = false
-    minifying = true
-    targetType = "JAVASCRIPT"
+    js {
+        mainClass = 'io.github.colemakmods.web.KeyboardClient'
+        targetFileName = "classes.js"
+        debugInformation = false
+        sourceMap = false
+    }
 }
-
-
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-  implementation project(":analyzer")
-  compileOnly ("org.teavm:teavm-classlib:${teavm_version}")
-  compileOnly ("org.teavm:teavm-jso:${teavm_version}")
-  compileOnly ("org.teavm:teavm-jso-apis:${teavm_version}")
+    implementation project(path: ':analyzer')
+    implementation teavm.libs.jso
+    implementation teavm.libs.jsoApis
 }
 
-
-task copyResources(type: Copy) {
-    from 'src/main/webapp'
-    into 'build'
+task webapp(dependsOn: generateJavaScript, type: Copy) {
+    into "build/webapp"
+    from "src/main/webapp"
+    from ("build/generated/teavm/js") {
+        into("teavm")
+    }
 }
 
