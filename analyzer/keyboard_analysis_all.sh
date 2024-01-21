@@ -14,7 +14,8 @@ OUTPUT_OPTS="tb"
 cd resources/layout_full
 mkdir -p $DIR/output
 
-for i in $( ls *.keyb ); do
+for i in *.keyb; do
+  [ -e "$i" ] || break
   echo Analysing keyboard $i
   if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak_dhk.keyb" ] || [ "$i" = "colemak2.keyb" ]; then
     CONFIG=$CONFIG_ERGO
@@ -26,5 +27,6 @@ for i in $( ls *.keyb ); do
     CONFIG=$CONFIG_TRAD
   fi
 
+ls -l "$DIR/build/libs/analyzer.jar"
   java -cp "$DIR/build/libs/analyzer.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c $CONFIG -f $FREQ -b 10,10 -o $OUTPUT_OPTS $i > $DIR/output/analysis_$i.out
 done

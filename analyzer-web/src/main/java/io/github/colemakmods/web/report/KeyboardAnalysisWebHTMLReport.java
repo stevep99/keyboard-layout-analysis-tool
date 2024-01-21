@@ -1,8 +1,7 @@
-package io.github.colemakmods.web;
+package io.github.colemakmods.web.report;
 
 import io.github.colemakmods.keyboard.FingerBigram;
-import io.github.colemakmods.keyboard.KeyboardAnalysis;
-import io.github.colemakmods.keyboard.KeyboardAnalysisReport;
+import io.github.colemakmods.keyboard.report.KeyboardAnalysisReport;
 import io.github.colemakmods.keyboard.LayoutResults;
 import io.github.colemakmods.web.teavm.JSFormatter;
 
@@ -75,7 +74,7 @@ public class KeyboardAnalysisWebHTMLReport implements KeyboardAnalysisReport {
     }
 
     private void showFingerBigramFreq(List<FingerBigram> sameFingerBigrams, PrintStream out) {
-        double[] fingerBigramFreq = FingerBigram.getSameFingerBigramFreq(sameFingerBigrams);
+        double[] fingerBigramFreq = FingerBigram.Companion.getSameFingerBigramFreq(sameFingerBigrams);
 
         out.println("<b><u>Finger Bigram Frequency</u></b>");
         out.println("<table>");

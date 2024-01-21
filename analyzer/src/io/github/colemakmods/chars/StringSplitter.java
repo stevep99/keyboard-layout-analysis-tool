@@ -12,7 +12,7 @@ public class StringSplitter {
 
     public static List<String> split(String str, char sep) {
         List<String> tokens = new ArrayList<String>();
-        StringBuffer currentToken = new StringBuffer();
+        StringBuilder currentToken = new StringBuilder();
         for (int i=0; i<str.length(); ++i) {
             if (str.charAt(i) != sep) {
                 currentToken.append(str.charAt(i));

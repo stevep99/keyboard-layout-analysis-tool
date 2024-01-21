@@ -1,13 +1,16 @@
 package io.github.colemakmods.web;
 
+import io.github.colemakmods.chars.BigramDataLoader;
 import io.github.colemakmods.chars.BigramFreq;
+import io.github.colemakmods.chars.CharDataLoader;
 import io.github.colemakmods.chars.CharFreq;
 import io.github.colemakmods.keyboard.KeyboardLayout;
 import io.github.colemakmods.keyboard.KeyboardMapping;
+import io.github.colemakmods.web.report.KeyboardAnalysisWebHTMLReport;
 import io.github.colemakmods.web.teavm.HTMLTextAreaElement;
 import io.github.colemakmods.keyboard.KeyboardConfig;
 import io.github.colemakmods.keyboard.KeyboardAnalysis;
-import io.github.colemakmods.keyboard.KeyboardAnalysisReport;
+import io.github.colemakmods.keyboard.report.KeyboardAnalysisReport;
 import io.github.colemakmods.keyboard.LayoutResults;
 
 import org.teavm.jso.browser.Window;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.io.IOException;
 
 public class KeyboardClient {
-    public static final String VERSION = "v1.32";
+    public static final String VERSION = "v1.33";
     private static final String DEFAULT_FREQ_RESOURCE = "en";
     private static final int DEFAULT_BIGRAM_LIST_SIZE = 5;
 
@@ -90,21 +93,18 @@ public class KeyboardClient {
             layoutSelect.getOptions().add(layoutOption);
         }
         layoutSelect.getOptions().add(layoutOptionCustom);
-        layoutSelect.addEventListener("change", new EventListener() {
-            @Override
-            public void handleEvent(Event event) {
-                int selected = layoutSelect.getSelectedIndex();
-                if (selected < ResourceStatic.ALL_LAYOUTS.length) {
-                    //update input layout unless "custom" is selected
-                    Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[selected];
-                    if (! keyboardResource.getPath().isEmpty()) {
-                        setLayoutInput(keyboardResource.getText());
-                        selectConfigOption(keyboardResource.getInfo());
+        layoutSelect.addEventListener("change", event -> {
+            int selected = layoutSelect.getSelectedIndex();
+            if (selected < ResourceStatic.ALL_LAYOUTS.length) {
+                //update input layout unless "custom" is selected
+                Resource keyboardResource = ResourceStatic.ALL_LAYOUTS[selected];
+                if (! keyboardResource.getPath().isEmpty()) {
+                    setLayoutInput(keyboardResource.getText());
+                    selectConfigOption(keyboardResource.getInfo());
 
-                        refreshInputKeyboardPanel();
-                        setKeyboadHeatmapPanel(null);
-                        setOutput(null);
-                    }
+                    refreshInputKeyboardPanel();
+                    setKeyboadHeatmapPanel(null);
+                    setOutput(null);
                 }
             }
         });
@@ -119,41 +119,12 @@ public class KeyboardClient {
             configSelect.getOptions().add(configOption);
         }
         configSelect.getOptions().add(configOptionCustom);
-        configSelect.addEventListener("change", new EventListener() {
-            @Override
-            public void handleEvent(Event event) {
-                int selected = configSelect.getSelectedIndex();
-                if (selected < ResourceStatic.ALL_CONFIGS.length) {
-                    //update input config unless "custom" is selected
-                    Resource configResource = ResourceStatic.ALL_CONFIGS[selected];
-                    setConfigInput(configResource.getText());
-
-                    refreshInputKeyboardPanel();
-                    setKeyboadHeatmapPanel(null);
-                    setOutput(null);
-                }
-            }
-        });
-
-        saveInputButton.addEventListener("click", new EventListener() {
-            @Override
-            public void handleEvent(Event event) {
-                //copy the layout text from the modal to the input field
-                if (!modalLayoutInput.getValue().equals(layoutInput.getValue())) {
-                    layoutInput.setValue(modalLayoutInput.getValue());
-                    //select the "Custom" option if config has changed
-                    layoutSelect.setSelectedIndex(ResourceStatic.ALL_LAYOUTS.length);
-                }
-
-                //copy the config text from the modal to the input field
-                if (!modalConfigInput.getValue().equals(configInput.getValue())) {
-                    configInput.setValue(modalConfigInput.getValue());
-                    //select the "Custom" option if config has changed
-                    configSelect.setSelectedIndex(ResourceStatic.ALL_CONFIGS.length);
-                }
-
-                //close the modal dialog
-                closeInputButton.click();
+        configSelect.addEventListener("change", event -> {
+            int selected = configSelect.getSelectedIndex();
+            if (selected < ResourceStatic.ALL_CONFIGS.length) {
+                //update input config unless "custom" is selected
+                Resource configResource = ResourceStatic.ALL_CONFIGS[selected];
+                setConfigInput(configResource.getText());
 
                 refreshInputKeyboardPanel();
                 setKeyboadHeatmapPanel(null);
@@ -161,13 +132,33 @@ public class KeyboardClient {
             }
         });
 
+        saveInputButton.addEventListener("click", event -> {
+            //copy the layout text from the modal to the input field
+            if (!modalLayoutInput.getValue().equals(layoutInput.getValue())) {
+                layoutInput.setValue(modalLayoutInput.getValue());
+                //select the "Custom" option if config has changed
+                layoutSelect.setSelectedIndex(ResourceStatic.ALL_LAYOUTS.length);
+            }
+
+            //copy the config text from the modal to the input field
+            if (!modalConfigInput.getValue().equals(configInput.getValue())) {
+                configInput.setValue(modalConfigInput.getValue());
+                //select the "Custom" option if config has changed
+                configSelect.setSelectedIndex(ResourceStatic.ALL_CONFIGS.length);
+            }
+
+            //close the modal dialog
+            closeInputButton.click();
+
+            refreshInputKeyboardPanel();
+            setKeyboadHeatmapPanel(null);
+            setOutput(null);
+        });
+
         //button to perform analysis
-        analyzeButton.addEventListener("click", new EventListener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (readyState) {
-                    performAnalyze();
-                }
+        analyzeButton.addEventListener("click", event -> {
+            if (readyState) {
+                performAnalyze();
             }
         });
     }
@@ -185,8 +176,8 @@ public class KeyboardClient {
 
     private static void refreshInputKeyboardPanel() {
         KeyboardLayout keyboardLayout = new KeyboardLayout(layoutSelect.getValue());
-        KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
-        KeyboardConfig.parse(keyboardLayout, configInput.getValue());
+        KeyboardMapping.initialize(keyboardLayout, layoutInput.getValue());
+        KeyboardConfig.initialize(keyboardLayout, configInput.getValue());
         HTMLKeyboardRenderer keyboardRenderer = new HTMLKeyboardRenderer(keyboardLayout, null);
 
         if (keyboardPanelFingers.getFirstChild() != null) {
@@ -221,8 +212,8 @@ public class KeyboardClient {
 
     private static void performAnalyze() {
         KeyboardLayout keyboardLayout = new KeyboardLayout(layoutSelect.getValue());
-        KeyboardMapping.parse(keyboardLayout, layoutInput.getValue());
-        KeyboardConfig.parse(keyboardLayout, configInput.getValue());
+        KeyboardMapping.initialize(keyboardLayout, layoutInput.getValue());
+        KeyboardConfig.initialize(keyboardLayout, configInput.getValue());
 
         List<String> messages = keyboardLayout.validate();
         if (!messages.isEmpty()) {
@@ -242,8 +233,8 @@ public class KeyboardClient {
 //        keyboardLayout.dumpLayout(System.out);
 //        keyboardLayout.dumpConfig(System.out);
 
-        List<CharFreq> charFreqs = CharFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
-        List<BigramFreq> bigramFreqs = BigramFreq.initialize(keyboardLayout.getAlphabet(), selectedFreqResource.getText());
+        List<CharFreq> charFreqs = new CharDataLoader().initialize(keyboardLayout.generateAlphabet(), selectedFreqResource.getText());
+        List<BigramFreq> bigramFreqs = new BigramDataLoader().initialize(keyboardLayout.generateAlphabet(), selectedFreqResource.getText());
 
         KeyboardAnalysis ka = new KeyboardAnalysis();
         LayoutResults layoutResults = ka.performAnalysis(keyboardLayout, charFreqs, bigramFreqs);

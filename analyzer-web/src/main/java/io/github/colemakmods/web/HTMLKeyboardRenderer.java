@@ -1,5 +1,6 @@
 package io.github.colemakmods.web;
 
+import io.github.colemakmods.keyboard.Hand;
 import io.github.colemakmods.keyboard.Key;
 import io.github.colemakmods.keyboard.KeyboardLayout;
 import io.github.colemakmods.web.teavm.JSFormatter;
@@ -97,7 +98,7 @@ public class HTMLKeyboardRenderer {
         return spanElt;
     }
 
-    private Position determinePosition(int rowid, int col, int rowCount, int hand) {
+    private Position determinePosition(int rowid, int col, int rowCount, Hand hand) {
         KeyboardLayout.KeyboardType type = keyboardLayout.getKeyboardType();
         int x = col * STD_KEY_WIDTH + 10;
         int y = (rowCount > 3) ? rowid * STD_KEY_HEIGHT - 24 : rowid * STD_KEY_HEIGHT - 36;
@@ -119,14 +120,14 @@ public class HTMLKeyboardRenderer {
             } else if (rowid == 3) {
                 x += STD_KEY_WIDTH * 3/4;
             } else if (rowid == 4) {
-                x += (hand == 0) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
+                x += (hand == Hand.LEFT) ? STD_KEY_WIDTH / 4 : STD_KEY_WIDTH * 5/4;;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX_SIMPLE) {
-            if (hand > 0) {
+            if (hand == Hand.RIGHT) {
                 x += STD_KEY_WIDTH / 2;
             }
         } else if (type == KeyboardLayout.KeyboardType.MATRIX_ERGODOX) {
-            if (hand > 0) {
+            if (hand == Hand.RIGHT) {
                 x += STD_KEY_WIDTH * 5 / 2;
             }
             if (rowid == 1 || rowid == 2) {

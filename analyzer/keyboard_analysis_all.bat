@@ -10,7 +10,7 @@ set OUTPUT_OPTS="t"
 pushd resources
 for %%f in (*.keyb) do (
   echo Analysing keyboard %%f
-  java -cp "../build/libs/keyboard-1.0-SNAPSHOT.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c %CONFIG_ERGO% -f %FREQ% -o %OUTPUT_OPTS% %%f > ../output/analysis_%%f.out
+  java -cp "../build/libs/analyzer.jar" io.github.colemakmods.keyboard.KeyboardAnalysis -c %CONFIG_ERGO% -f %FREQ% -o %OUTPUT_OPTS% %%f > ../output/analysis_%%f.out
 )
 popd
 

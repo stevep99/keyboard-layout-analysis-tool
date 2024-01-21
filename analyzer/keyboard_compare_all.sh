@@ -11,7 +11,8 @@ FREQ_ARG="-f $DIR/resources/freq/en_books.freq"
 
 cd resources/layout_full
 
-for i in $( ls *.keyb ); do
+for i in *.keyb; do
+  [ -e "$i" ] || break
 
   if [ "$i" = "colemak_dh.keyb" ] || [ "$i" = "colemak_dhk.keyb" ] ; then
     POS_OVERRIDE_ARG="-p $DIR/resources/config/pos_override_colemak_dh.dat"
